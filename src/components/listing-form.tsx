@@ -1,0 +1,16 @@
+'use client';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { submitListing } from '@/app/actions';
+
+const initial={title:'',category:'Motos',operation:'Venta',price:'',zone:'',description:'',contactName:'',whatsapp:''};
+export default function ListingForm(){
+  const router=useRouter();
+  const [draft,setDraft]=useState(initial);
+  const [status,setStatus]=useState('');
+  const [pending,startTransition]=useTransition();
+  function change(key:keyof typeof initial,value:string){setDraft(current=>({...current,[key]:value,...(key==='category'&&value!=='Casas y departamentos'?{operation:'Venta'}:{})}));setStatus('');}
+  const isHome=draft.category==='Casas y departamentos';
+  function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();startTransition(async()=>{try {const result=await submitListing(draft);if('id' in result&&result.id){router.push('/mis-anuncios');return;}setStatus(result.error||'No se pudo enviar el anuncio.');}catch{setStatus('No pudimos conectar con el servidor. Intenta de nuevo.');}});}
+  return <form className="draft-form" onSubmit={submit}><div className="form-grid"><label className="wide">Título del anuncio<input required minLength={8} maxLength={100} value={draft.title} onChange={e=>change('title',e.target.value)} placeholder="Ej.: Moto de trabajo en buen estado"/></label><label>Categoría<select value={draft.category} onChange={e=>change('category',e.target.value)}><option>Motos</option><option>Vehículos</option><option>Lotes</option><option>Casas y departamentos</option></select></label><label>Operación<select value={draft.operation} onChange={e=>change('operation',e.target.value)}><option>Venta</option>{isHome&&<><option>Alquiler</option><option>Anticrético</option></>}</select></label><label>{draft.operation==='Alquiler'?'Mensualidad (Bs)':draft.operation==='Anticrético'?'Monto del anticrético (Bs)':'Precio (Bs)'}<input type="number" min="1" max="999999999" step="0.01" required value={draft.price} onChange={e=>change('price',e.target.value)} placeholder="0"/></label><label>Barrio, zona o comunidad<input required minLength={2} maxLength={100} value={draft.zone} onChange={e=>change('zone',e.target.value)} placeholder="Dentro de San Julián"/></label><label className="wide">Descripción<textarea required minLength={20} maxLength={3000} rows={5} value={draft.description} onChange={e=>change('description',e.target.value)} placeholder="Describe su estado, características y condiciones."/></label><label>Tu nombre o nombre comercial<input required minLength={2} maxLength={80} value={draft.contactName} onChange={e=>change('contactName',e.target.value)} /></label><label>WhatsApp de Bolivia<input required inputMode="tel" minLength={8} value={draft.whatsapp} onChange={e=>change('whatsapp',e.target.value)} placeholder="Ej.: 7XXXXXXX"/></label></div><p className="muted">Tu número será visible en el anuncio aprobado para que te contacten. Tras enviarlo, podrás subir hasta 5 fotos en «Mis anuncios».</p><button className="button" type="submit" disabled={pending}>{pending?'Enviando…':'Enviar para revisión'}</button><p className="form-status" role="status">{status}</p></form>;
+}

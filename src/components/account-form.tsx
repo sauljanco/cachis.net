@@ -1,0 +1,29 @@
+'use client';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { authClient } from '@/lib/auth/client';
+
+export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
+  const router=useRouter();
+  const [mode,setMode]=useState<'login'|'signup'>('login');
+  const [message,setMessage]=useState('');
+  const [pending,startTransition]=useTransition();
+  function signOut(){startTransition(async()=>{const result=await authClient.signOut();if(result.error){setMessage('No se pudo cerrar la sesión.');return;}router.refresh();});}
+  function submit(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    const data=new FormData(e.currentTarget);
+    const email=String(data.get('email')||'').trim();
+    const password=String(data.get('password')||'');
+    const name=String(data.get('name')||'').trim();
+    setMessage('');
+    startTransition(async()=>{
+      try {
+        const result=mode==='login'?await authClient.signIn.email({email,password}):await authClient.signUp.email({email,password,name});
+        if(result.error){setMessage(result.error.message||'No se pudo acceder. Revisa los datos.');return;}
+        router.push('/mis-anuncios');router.refresh();
+      }catch{setMessage('No pudimos conectar con el servicio de cuentas. Intenta de nuevo.');}
+    });
+  }
+  if(signedIn)return <><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message}</p></>;
+  return <div><div className="auth-tabs"><button type="button" aria-pressed={mode==='login'} onClick={()=>{setMode('login');setMessage('');}}>Iniciar sesión</button><button type="button" aria-pressed={mode==='signup'} onClick={()=>{setMode('signup');setMessage('');}}>Crear cuenta</button></div><form className="draft-form" onSubmit={submit}><div className="form-grid">{mode==='signup'&&<label className="wide">Tu nombre<input name="name" required minLength={2} autoComplete="name" /></label>}<label className="wide">Correo electrónico<input name="email" type="email" required autoComplete="email" /></label><label className="wide">Contraseña<input name="password" type="password" required minLength={8} autoComplete={mode==='login'?'current-password':'new-password'} /></label></div><button className="button" type="submit" disabled={pending}>{pending?'Un momento…':mode==='login'?'Iniciar sesión':'Crear cuenta'}</button><p role="status" className="form-status">{message}</p></form></div>;
+}
