@@ -44,3 +44,5 @@ Usar [Netlify Free](https://www.netlify.com/pricing/) para el frontend y las fun
 Para desplegar: crea o abre tu cuenta de Netlify, importa `sauljanco/cachis.net` desde GitHub como proyecto Next.js, usa `npm run build` y deja que Netlify configure su adaptador automáticamente. En las variables de entorno del proyecto configura `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`; agrega `APP_URL` con la URL pública definitiva. Copia los valores desde `.env.local` mediante el panel privado, nunca al repositorio ni al chat. Registra esa URL como origen permitido en Neon Auth. Verifica inicio de sesión, publicación, foto y moderación en el dominio de Netlify antes de conectar `cachis.net` en DNS. Después de añadir el dominio, cambia `APP_URL` y agrega el nuevo origen en Neon Auth.
 
 Netlify Functions admite [6 MB de cuerpo, con unos 4,5 MB efectivos para archivos binarios](https://docs.netlify.com/build/functions/configuration/); las fotos se limitan a 4 MB.
+
+Deploy Vercel
