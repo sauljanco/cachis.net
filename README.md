@@ -4,7 +4,7 @@ Marketplace móvil para iniciar en San Julián, Santa Cruz, Bolivia. Anuncios de
 
 ## Estado actual
 
-- Next.js 16, TypeScript y PWA inicial.
+- Next.js 16, TypeScript y PWA instalable con pantalla informativa sin conexión.
 - Neon PostgreSQL en Virginia con esquema `cachis`, ubicaciones jerárquicas y migraciones versionadas.
 - Neon Auth para crear cuenta e iniciar sesión.
 - Catálogo y fichas desde anuncios aprobados, contacto por WhatsApp, publicación sujeta a moderación y panel privado para propietarios.
@@ -31,8 +31,9 @@ Abre `http://localhost:3000` (con `localhost`, como indica `APP_URL`). Neon Auth
 
 - Completar la prueba de aprobación de anuncios, cierre de sesión y recuperación de cuenta. Ya se verificaron registro, inicio de sesión, publicación pendiente, subida y lectura privada de fotos, rechazo por moderación, catálogo vacío y acceso anónimo restringido. El anuncio y la foto de prueba fueron retirados.
 - Agregar edición de anuncios, favoritos por cuenta, reportes, controles de abuso, pruebas de recuperación y políticas de privacidad.
-- Completar PWA instalable, soporte offline controlado, SEO y analítica. La indexación está desactivada durante el piloto.
-- Conectar el repositorio de GitHub con Netlify, configurar variables de producción, dominio, respaldo y restauración. No se ha lanzado el sitio.
+- Verificar la instalación de la PWA en Android e iOS y decidir si conviene guardar contenido público para lectura sin conexión. La pantalla offline actual no almacena anuncios ni datos de cuentas.
+- Completar SEO y analítica. La indexación está desactivada durante el piloto.
+- Verificar en producción el recorrido de cuenta, anuncio, foto y moderación; después conectar el dominio, respaldar y probar restauración. El propietario informa que el sitio ya se publicó en Netlify.
 
 El roadmap entregado por el propietario ordena el trabajo por fases: estabilización, marketplace, confianza, gestión comercial, empresas, monetización y escala. El MVP no incluye pagos de compraventas.
 
@@ -42,4 +43,4 @@ Usar [Netlify Free](https://www.netlify.com/pricing/) para el frontend y las fun
 
 Para desplegar: crea o abre tu cuenta de Netlify, importa `sauljanco/cachis.net` desde GitHub como proyecto Next.js, usa `npm run build` y deja que Netlify configure su adaptador automáticamente. En las variables de entorno del proyecto configura `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`; agrega `APP_URL` con la URL pública definitiva. Copia los valores desde `.env.local` mediante el panel privado, nunca al repositorio ni al chat. Registra esa URL como origen permitido en Neon Auth. Verifica inicio de sesión, publicación, foto y moderación en el dominio de Netlify antes de conectar `cachis.net` en DNS. Después de añadir el dominio, cambia `APP_URL` y agrega el nuevo origen en Neon Auth.
 
-Netlify Functions admite [6 MB de cuerpo, con unos 4,5 MB efectivos para archivos binarios](https://docs.netlify.com/build/functions/configuration/); las fotos se limitan a 4 MB. No se ha creado aún una cuenta ni un despliegue en Netlify.
+Netlify Functions admite [6 MB de cuerpo, con unos 4,5 MB efectivos para archivos binarios](https://docs.netlify.com/build/functions/configuration/); las fotos se limitan a 4 MB.
