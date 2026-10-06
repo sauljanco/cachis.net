@@ -7,7 +7,7 @@ Marketplace móvil para iniciar en San Julián, Santa Cruz, Bolivia. Anuncios de
 - Next.js 16, TypeScript y PWA instalable con pantalla informativa sin conexión.
 - Neon PostgreSQL en Virginia con esquema `cachis`, ubicaciones jerárquicas y migraciones versionadas.
 - Neon Auth para crear cuenta e iniciar sesión.
-- Catálogo y fichas desde anuncios aprobados, contacto por WhatsApp, publicación sujeta a moderación y panel privado para propietarios.
+- Catálogo y fichas desde anuncios aprobados, contacto por WhatsApp, publicación sujeta a moderación y panel privado para propietarios. Los propietarios pueden editar sus anuncios; cada edición vuelve a revisión.
 - Fotos procesadas a WebP, máximo 4 MB de entrada y cinco por anuncio, en el bucket privado `anuncios` de Neon Object Storage. El límite deja margen para el cuerpo multipart de Vercel Functions (4,5 MB).
 - Panel de moderación protegido por `ADMIN_USER_IDS`.
 
@@ -30,7 +30,7 @@ Abre `http://localhost:3000` (con `localhost`, como indica `APP_URL`). Neon Auth
 ## Antes de abrir al público
 
 - Completar la prueba de aprobación de anuncios, cierre de sesión y recuperación de cuenta. Ya se verificaron registro, inicio de sesión, publicación pendiente, subida y lectura privada de fotos, rechazo por moderación, catálogo vacío y acceso anónimo restringido. El anuncio y la foto de prueba fueron retirados.
-- Agregar edición de anuncios, favoritos por cuenta, reportes, controles de abuso, pruebas de recuperación y políticas de privacidad.
+- Agregar favoritos por cuenta, reportes, controles de abuso, pruebas de recuperación y políticas de privacidad.
 - Verificar la instalación de la PWA en Android e iOS y decidir si conviene guardar contenido público para lectura sin conexión. La pantalla offline actual no almacena anuncios ni datos de cuentas.
 - Completar SEO y analítica. La indexación está desactivada durante el piloto.
 - Verificar en producción el recorrido de cuenta, anuncio, foto y moderación; después conectar el dominio, respaldar y probar restauración. El propietario informa que el sitio ya se publicó en Netlify.

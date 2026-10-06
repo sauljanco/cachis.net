@@ -23,6 +23,25 @@ export async function submitListing(input: unknown) {
   return { id: String(results[1][0].id) };
 }
 
+export async function updateListing(id: string, input: unknown) {
+  const user = await currentUser();
+  if (!user || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return { error: 'Acción no permitida.' };
+  }
+  const parsed = listingSchema.safeParse(input);
+  if (!parsed.success) return { error: 'Revisa el título, precio, descripción y número de WhatsApp.' };
+  const d = parsed.data;
+  const rows = await database()`UPDATE cachis.listings SET
+    title=${d.title},category=${d.category},operation=${d.operation},price=${d.price},
+    zone=${d.zone},description=${d.description},contact_name=${d.contactName},
+    whatsapp=${d.whatsapp},status='pending',updated_at=now()
+    WHERE id=${id} AND owner_id=${user.id} AND status IN ('pending','published','paused','rejected')
+    RETURNING id`;
+  if (!rows.length) return { error: 'Este anuncio no se puede editar o ya no está disponible.' };
+  revalidatePath('/'); revalidatePath('/mis-anuncios'); revalidatePath('/administrar'); revalidatePath('/anuncios/'+id);
+  return { success: true };
+}
+
 export async function changeListingStatus(id: string, status: string) {
   const user = await currentUser();
   if (!user || !['paused','closed','pending'].includes(status) || !/^[0-9a-f-]{36}$/i.test(id)) return { error:'Acción no permitida.' };

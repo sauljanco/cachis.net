@@ -21,3 +21,8 @@ export async function findListing(id: string) {
 export async function ownerListings(ownerId: string) {
   return (await database()`SELECT l.*,(SELECT p.id FROM cachis.listing_photos p WHERE p.listing_id=l.id ORDER BY p.position LIMIT 1) AS photo_id FROM cachis.listings l WHERE l.owner_id=${ownerId} ORDER BY l.created_at DESC LIMIT 100`).map(mapRow);
 }
+export async function ownerListing(id: string, ownerId: string) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
+  const rows = await database()`SELECT l.* FROM cachis.listings l WHERE l.id=${id} AND l.owner_id=${ownerId}`;
+  return rows[0] ? mapRow(rows[0]) : null;
+}
