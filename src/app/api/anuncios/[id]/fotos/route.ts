@@ -23,10 +23,10 @@ export async function POST(request:NextRequest,{params}:Context){
   if(!owned.length)return NextResponse.json({error:'Este anuncio no admite más fotos.'},{status:403});
   const length=Number(request.headers.get('content-length'));
   if(!Number.isSafeInteger(length)||length<1)return NextResponse.json({error:'Falta indicar el tamaño de la foto.'},{status:411});
-  if(length>6*1024*1024)return NextResponse.json({error:'La foto supera 5 MB.'},{status:413});
+  if(length>4.25*1024*1024)return NextResponse.json({error:'La foto supera 4 MB.'},{status:413});
   const form=await request.formData();
   const file=form.get('photo');
-  if(!(file instanceof File)||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size===0||file.size>5*1024*1024)return NextResponse.json({error:'Usa una foto JPG, PNG o WebP de hasta 5 MB.'},{status:400});
+  if(!(file instanceof File)||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size===0||file.size>4*1024*1024)return NextResponse.json({error:'Usa una foto JPG, PNG o WebP de hasta 4 MB.'},{status:400});
   let image:Buffer;
   try{
     const input=Buffer.from(await file.arrayBuffer());
