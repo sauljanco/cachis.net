@@ -7,7 +7,7 @@ export default function PhotoUpload({id}:{id:string}){
   const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
   async function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();const file=input.current?.files?.[0];if(!file)return;
-    if(file.size>5*1024*1024){setMessage('La foto debe pesar 5 MB o menos.');return;}
+    if(file.size>4*1024*1024){setMessage('La foto debe pesar 4 MB o menos.');return;}
     setBusy(true);setMessage('Subiendo foto…');
     try{
       const body=new FormData();body.set('photo',file);
@@ -17,5 +17,5 @@ export default function PhotoUpload({id}:{id:string}){
       if(input.current)input.current.value='';setMessage('Foto guardada.');router.refresh();
     }catch{setMessage('No se pudo subir la foto. Intenta de nuevo.');}finally{setBusy(false);}
   }
-  return <form className="photo-upload" onSubmit={submit}><label>Agregar foto JPG, PNG o WebP (máximo 5 MB)<input ref={input} name="photo" type="file" accept="image/jpeg,image/png,image/webp" required /></label><button className="text-button" type="submit" disabled={busy}>Subir foto</button><p role="status">{message}</p></form>;
+  return <form className="photo-upload" onSubmit={submit}><label>Agregar foto JPG, PNG o WebP (máximo 4 MB)<input ref={input} name="photo" type="file" accept="image/jpeg,image/png,image/webp" required /></label><button className="text-button" type="submit" disabled={busy}>Subir foto</button><p role="status">{message}</p></form>;
 }
