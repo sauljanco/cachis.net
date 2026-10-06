@@ -10,6 +10,7 @@ Marketplace móvil para iniciar en San Julián, Santa Cruz, Bolivia. Anuncios de
 - Catálogo y fichas desde anuncios aprobados, contacto por WhatsApp, publicación sujeta a moderación y panel privado para propietarios. Los propietarios pueden editar sus anuncios; cada edición vuelve a revisión.
 - Fotos procesadas a WebP, máximo 4 MB de entrada y cinco por anuncio, en el bucket privado `anuncios` de Neon Object Storage. El límite deja margen para el cuerpo multipart de Vercel Functions (4,5 MB).
 - Panel de moderación protegido por `ADMIN_USER_IDS`.
+- Los usuarios registrados pueden reportar anuncios publicados; el administrador revisa cada reporte y puede descartarlo o pausar el anuncio.
 
 El repositorio no contiene credenciales. `src/lib/listings.ts` conserva los tipos y utilidades del catálogo. Los anuncios de demostración fueron retirados.
 
@@ -30,19 +31,19 @@ Abre `http://localhost:3000` (con `localhost`, como indica `APP_URL`). Neon Auth
 ## Antes de abrir al público
 
 - Completar la prueba de aprobación de anuncios, cierre de sesión y recuperación de cuenta. Ya se verificaron registro, inicio de sesión, publicación pendiente, subida y lectura privada de fotos, rechazo por moderación, catálogo vacío y acceso anónimo restringido. El anuncio y la foto de prueba fueron retirados.
-- Agregar favoritos por cuenta, reportes, controles de abuso, pruebas de recuperación y políticas de privacidad.
+- Agregar favoritos por cuenta, controles de abuso adicionales, pruebas de recuperación y políticas de privacidad.
 - Verificar la instalación de la PWA en Android e iOS y decidir si conviene guardar contenido público para lectura sin conexión. La pantalla offline actual no almacena anuncios ni datos de cuentas.
 - Completar SEO y analítica. La indexación está desactivada durante el piloto.
-- Verificar en producción el recorrido de cuenta, anuncio, foto y moderación; después conectar el dominio, respaldar y probar restauración. El propietario informa que el sitio ya se publicó en Netlify.
+- Verificar en producción el recorrido de cuenta, anuncio, foto, reporte y moderación; después conectar el dominio, respaldar y probar restauración. El sitio de pruebas está publicado en Vercel.
 
 El roadmap entregado por el propietario ordena el trabajo por fases: estabilización, marketplace, confianza, gestión comercial, empresas, monetización y escala. El MVP no incluye pagos de compraventas.
 
-## Alojamiento gratuito elegido para el piloto
+## Despliegue actual en Vercel
 
-Usar [Netlify Free](https://www.netlify.com/pricing/) para el frontend y las funciones de Next.js, con Neon como base de datos, autenticación y almacenamiento. Netlify [permite proyectos comerciales en Free](https://www.netlify.com/blog/introducing-netlify-free-plan/) y [soporta App Router, Server Actions y Route Handlers](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/). Su límite actual es de 300 créditos mensuales: al agotarse, el sitio se pausa hasta el siguiente ciclo. Este plan evita el coste fijo de Vercel Pro durante el piloto, pero requiere vigilar el consumo.
+El proyecto está conectado a GitHub y se despliega en `https://cachis-net.vercel.app`. Neon proporciona PostgreSQL, autenticación y almacenamiento. Antes de enviar nuevos cambios, ejecutar `npm run db:migrate` si hay migraciones nuevas; después verificar `npm run typecheck` y `npm run build`.
 
-Para desplegar: crea o abre tu cuenta de Netlify, importa `sauljanco/cachis.net` desde GitHub como proyecto Next.js, usa `npm run build` y deja que Netlify configure su adaptador automáticamente. En las variables de entorno del proyecto configura `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`; agrega `APP_URL` con la URL pública definitiva. Copia los valores desde `.env.local` mediante el panel privado, nunca al repositorio ni al chat. Registra esa URL como origen permitido en Neon Auth. Verifica inicio de sesión, publicación, foto y moderación en el dominio de Netlify antes de conectar `cachis.net` en DNS. Después de añadir el dominio, cambia `APP_URL` y agrega el nuevo origen en Neon Auth.
+Las variables privadas de producción son `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`. `APP_URL` debe coincidir con la URL pública. Al conectar `cachis.net`, cambiar `APP_URL` y registrar el dominio en Neon Auth. Nunca subir valores de `.env.local` a GitHub.
 
-Netlify Functions admite [6 MB de cuerpo, con unos 4,5 MB efectivos para archivos binarios](https://docs.netlify.com/build/functions/configuration/); las fotos se limitan a 4 MB.
+El equipo actual aparece en Vercel Hobby. Según las [reglas de Vercel](https://vercel.com/docs/limits/fair-use-guidelines), Hobby se limita a uso personal no comercial; antes de abrir el marketplace comercial al público se requiere Pro o Enterprise. No se ha contratado un plan en este repositorio.
 
-Deploy Vercel
+Las fotos se limitan a 4 MB de entrada para dejar margen al cuerpo de las funciones de Vercel.

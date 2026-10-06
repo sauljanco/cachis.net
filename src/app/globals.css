@@ -11,3 +11,4 @@
 @media(max-width:650px){.nav-account{font-size:12px}.header nav{gap:9px}.header .button.small{padding:8px;font-size:11px}}
 .owner-photo{position:relative;width:180px;height:120px;border-radius:8px;overflow:hidden;margin:12px 0}.owner-photo img{object-fit:cover}
 .photo-upload{margin:16px 0}.photo-upload label{display:block;font-size:14px;font-weight:600}.photo-upload input{display:block;margin-top:8px;max-width:100%}
+.report-section{border-top:1px solid var(--border);margin-top:32px;padding-top:24px}.report-section h2{font-size:20px;margin-bottom:8px}.report-section p{color:var(--muted);font-size:14px}.report-section a{text-decoration:underline}.report-section form{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.report-section label{font-size:14px;font-weight:600}.report-section textarea{width:100%;border:1px solid #bac9be;border-radius:7px;padding:12px;min-height:96px}.report-section form p{margin:0}
