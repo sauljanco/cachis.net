@@ -95,3 +95,4 @@ footer{max-width:1232px;margin:auto;padding:30px 0 34px;border-color:#e0e9df}foo
 .owner-shortcuts{display:flex;flex-wrap:wrap;gap:10px}.owner-admin-link{background:#e9f4e1;color:var(--green);border-color:#c8dfc6;box-shadow:none}.owner-admin-link:hover{background:#d9ebd2;color:var(--green)}
 .crm-stats{grid-template-columns:repeat(4,minmax(0,1fr))}.crm-card-form input{width:100%;border:1px solid #bac9be;border-radius:9px;background:white;padding:10px 12px;min-height:44px}.crm-due{background:#fff0d4;color:#7b4d07}.crm-follow-up{padding:11px 12px;background:#eff6eb;border-radius:9px;font-size:13px}.crm-follow-up-due{background:#fff4df;color:#775006}
 @media(max-width:700px){.crm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.recovery-link{margin:12px 0 0;font-size:14px}.recovery-link a{color:var(--green);text-decoration:underline;text-underline-offset:3px}.recovery-form{max-width:620px;margin:20px 0 48px}.recovery-form .notice{margin:0}

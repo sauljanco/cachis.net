@@ -8,6 +8,12 @@ const config: NextConfig = {
         { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
         { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
       ],
+    }, {
+      source: '/recuperar-clave',
+      headers: [
+        { key: 'Referrer-Policy', value: 'no-referrer' },
+        { key: 'Cache-Control', value: 'no-store' },
+      ],
     }];
   },
 };
