@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Icon from '@/components/icon';
+import CategoryIcon from '@/components/category-icon';
 import { money, normalize, type Listing } from '@/lib/listings';
 
 const categories = [
@@ -60,7 +61,7 @@ export default function Marketplace({ listings }: { listings: Listing[] }) {
         <a href="#resultados" className="button search-submit">Buscar <Icon name="arrow" /></a>
       </div>
       <div className="category-heading"><span>Explora por categoría</span><span>Encuentra lo que necesitas, cerca de casa.</span></div>
-      <div className="categories" aria-label="Categorías">{categories.map(c => <button key={c.name} type="button" aria-pressed={category === c.name} className={category === c.name ? 'category active' : 'category'} onClick={() => setCategory(c.name)}><span className="category-icon"><Icon name={c.icon} /></span><span>{c.name}</span></button>)}</div>
+      <div className="categories" aria-label="Categorías">{categories.map(c => <button key={c.name} type="button" aria-pressed={category === c.name} className={category === c.name ? 'category active' : 'category'} onClick={() => setCategory(c.name)}><span className="category-icon"><CategoryIcon name={c.icon} /></span><span>{c.name}</span></button>)}</div>
     </section>
 
     <section id="resultados" className="results">

@@ -1,0 +1,12 @@
+type CategoryIconName = 'grid' | 'bike' | 'car' | 'land' | 'home';
+
+export default function CategoryIcon({ name }: { name: CategoryIconName }) {
+  const illustration = {
+    grid: <><rect x="5" y="5" width="8" height="8" rx="2" fill="#bfdc9b"/><rect x="17" y="5" width="8" height="8" rx="2" fill="#85b88d"/><rect x="5" y="17" width="8" height="8" rx="2" fill="#85b88d"/><rect x="17" y="17" width="8" height="8" rx="2" fill="#bfdc9b"/></>,
+    bike: <><circle cx="7" cy="22" r="4.2" fill="#f8faf6" stroke="#234b3f" strokeWidth="2"/><circle cx="25" cy="22" r="4.2" fill="#f8faf6" stroke="#234b3f" strokeWidth="2"/><path d="M7 22l6.3-10 6 10h5.7l-5.5-9.5h-5.2" fill="none" stroke="#234b3f" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M10.7 14h8.2l-2-3H13z" fill="#a7cc7a" stroke="#234b3f" strokeWidth="1.4"/><path d="M19 12.5h4l2 3.2M5 13h4" fill="none" stroke="#234b3f" strokeWidth="1.7" strokeLinecap="round"/></>,
+    car: <><path d="M4 16.5l2.7-6.4a3 3 0 0 1 2.7-1.8h13.2a3 3 0 0 1 2.7 1.8l2.7 6.4v7.2H4z" fill="#8fbd8f" stroke="#234b3f" strokeWidth="1.7" strokeLinejoin="round"/><path d="M8 15.2l2.2-5h11.6l2.2 5z" fill="#deece1" stroke="#234b3f" strokeWidth="1.2"/><path d="M4 18h24" stroke="#234b3f" strokeWidth="1.3"/><circle cx="9" cy="23.5" r="2.1" fill="#234b3f"/><circle cx="23" cy="23.5" r="2.1" fill="#234b3f"/><path d="M6.5 19.6h3m13 0h3" stroke="#fff9d3" strokeWidth="1.7" strokeLinecap="round"/></>,
+    land: <><path d="M2 23l8-3 9 2 11-4v7l-11 4-9-2-8 3z" fill="#c9dc9a" stroke="#355e45" strokeWidth="1.5" strokeLinejoin="round"/><path d="M10 20v7m9-5v7" stroke="#648653" strokeWidth="1"/><path d="M12 15V7m12 10V9" stroke="#4a7154" strokeWidth="1.6"/><path d="M9 12c1-4 3-6 6-6m6 4c1-4 3-6 6-6" fill="none" stroke="#52966c" strokeWidth="2.1" strokeLinecap="round"/><path d="M2 23l8-3 9 2 11-4" fill="none" stroke="#799f64" strokeWidth="1"/></>,
+    home: <><path d="M5 14.5L16 5l11 9.5V28H5z" fill="#c9deb2" stroke="#234b3f" strokeWidth="1.7" strokeLinejoin="round"/><path d="M3 15.5L16 4l13 11.5" fill="none" stroke="#234b3f" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 28v-9h6v9M8 17h3v4H8m13-4h3v4h-3" fill="#f8faf6" stroke="#234b3f" strokeWidth="1.3" strokeLinejoin="round"/></>,
+  }[name];
+  return <svg width="32" height="32" viewBox="0 0 32 32" role="img" aria-hidden="true" focusable="false">{illustration}</svg>;
+}

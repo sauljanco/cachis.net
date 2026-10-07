@@ -18,8 +18,8 @@ export async function submitListing(input: unknown) {
   // El bloqueo por propietario serializa los envíos simultáneos y la cuota.
   const results = await sql.transaction([
     sql`SELECT pg_advisory_xact_lock(hashtext(${user.id}))`,
-    sql`INSERT INTO cachis.listings(owner_id,title,category,operation,price,zone,description,contact_name,whatsapp)
-        SELECT ${user.id},${d.title},${d.category},${d.operation},${d.price},${d.zone},${d.description},${d.contactName},${d.whatsapp}
+    sql`INSERT INTO cachis.listings(owner_id,title,category,operation,price,zone,description,contact_name,whatsapp,latitude,longitude)
+        SELECT ${user.id},${d.title},${d.category},${d.operation},${d.price},${d.zone},${d.description},${d.contactName},${d.whatsapp},${typeof d.latitude === 'number' ? d.latitude : null},${typeof d.longitude === 'number' ? d.longitude : null}
         WHERE (SELECT count(*) FROM cachis.listings WHERE owner_id=${user.id} AND created_at>now()-interval '1 day')<10 RETURNING id`
   ]);
   if (!results[1][0]) return { error: 'Alcanzaste el límite de 10 publicaciones diarias. Intenta mañana.' };
@@ -38,7 +38,7 @@ export async function updateListing(id: string, input: unknown) {
   const rows = await database()`UPDATE cachis.listings SET
     title=${d.title},category=${d.category},operation=${d.operation},price=${d.price},
     zone=${d.zone},description=${d.description},contact_name=${d.contactName},
-    whatsapp=${d.whatsapp},status='pending',updated_at=now()
+    whatsapp=${d.whatsapp},latitude=${typeof d.latitude === 'number' ? d.latitude : null},longitude=${typeof d.longitude === 'number' ? d.longitude : null},status='pending',updated_at=now()
     WHERE id=${id} AND owner_id=${user.id} AND status IN ('pending','published','paused','rejected')
     RETURNING id`;
   if (!rows.length) return { error: 'Este anuncio no se puede editar o ya no está disponible.' };

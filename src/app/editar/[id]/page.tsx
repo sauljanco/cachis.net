@@ -25,6 +25,8 @@ export default async function EditListing({ params }: { params: Promise<{ id: st
     description: listing.description,
     contactName: listing.contactName,
     whatsapp: listing.whatsapp,
+    latitude: listing.latitude === null ? '' : String(listing.latitude),
+    longitude: listing.longitude === null ? '' : String(listing.longitude),
   };
   return <main id="contenido" className="container publish-page"><Link href="/mis-anuncios" className="back">← Volver a mis anuncios</Link><h1>Editar anuncio</h1><p className="lead">Actualiza la información de tu oferta en San Julián.</p><div className="notice"><strong>Revisaremos los cambios antes de mostrarlos.</strong><p>Si el anuncio ya estaba publicado, dejará de aparecer hasta que se apruebe de nuevo.</p></div><ListingForm id={id} initialDraft={initialDraft}/></main>;
 }
