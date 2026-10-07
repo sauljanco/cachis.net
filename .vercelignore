@@ -1,0 +1,5 @@
+.npm-cache/
+verification/
+.local-setup/
+*.tsbuildinfo
+*.log
