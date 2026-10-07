@@ -19,7 +19,6 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
   return <html lang="es-BO"><body>
     <ServiceWorkerRegistration />
     <a className="skip" href="#contenido">Ir al contenido</a>
-    <div className="demo-bar"><span className="demo-dot" /> Piloto local en San Julián <span className="demo-divider">·</span> Cada anuncio pasa por revisión</div>
     <header className="header">
       <Brand />
       <span className="location"><Icon name="pin" /> San Julián, Santa Cruz</span>
@@ -31,6 +30,6 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       </nav>
     </header>
     {children}
-    <footer><Brand /><p>De aquí, para los de aquí.</p><span>San Julián · Santa Cruz · Bolivia</span><small>Piloto local de cachis.net. Confirma la información de cada oferta con su anunciante.</small></footer>
+    <footer><Brand /><p>De aquí, para los de aquí.</p><span>San Julián · Santa Cruz · Bolivia</span><small>Confirma la información de cada oferta con su anunciante.</small></footer>
   </body></html>;
 }

@@ -53,21 +53,6 @@ export default function Marketplace({ listings }: { listings: Listing[] }) {
   ).sort((a, b) => sort === 'low' ? a.price - b.price : sort === 'high' ? b.price - a.price : 0);
 
   return <main id="contenido" className="container marketplace">
-    <section className="intro" aria-labelledby="hero-title">
-      <div className="intro-copy">
-        <p className="eyebrow hero-eyebrow"><span className="eyebrow-line" /> SAN JULIÁN · SANTA CRUZ</p>
-        <h1 id="hero-title">Todo lo que buscas,<br /><em>más cerca de ti.</em></h1>
-        <p className="hero-description">Encuentra motos, vehículos y espacios para vivir.<br className="desktop-break" /> Haz negocios con gente de tu comunidad.</p>
-        <div className="hero-actions"><a className="button hero-primary" href="#resultados">Explorar anuncios <Icon name="arrow" /></a><Link href="/publicar" className="hero-secondary">Publicar una oferta <Icon name="arrow" /></Link></div>
-      </div>
-      <div className="intro-note" aria-label="Marketplace local de San Julián">
-        <span className="note-orbit note-orbit-one" /><span className="note-orbit note-orbit-two" />
-        <span className="note-kicker">HECHO PARA ENCONTRARNOS</span>
-        <strong>Lo bueno<br />está <em>aquí.</em></strong>
-        <span className="note-bottom"><Icon name="pin" /> San Julián es el comienzo <Icon name="arrow" /></span>
-      </div>
-    </section>
-
     <section aria-label="Buscar anuncios" className="search-area">
       <div className="search-row">
         <label className="search-input"><Icon name="search" /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca una moto, un lote, una casa..." aria-label="Buscar anuncios" /></label>
@@ -79,13 +64,12 @@ export default function Marketplace({ listings }: { listings: Listing[] }) {
     </section>
 
     <section id="resultados" className="results">
-      <div className="results-header"><div><p className="eyebrow">OPORTUNIDADES CERCA DE TI</p><h2>{onlyFavorites ? 'Tus anuncios guardados' : 'Descubre lo que hay en San Julián'}</h2><p>Ofertas locales para comprar, vender y alquilar con más confianza.</p></div><label className="sort">Ordenar por<select value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Más recientes</option><option value="low">Menor precio</option><option value="high">Mayor precio</option></select></label></div>
+      <div className="results-header"><h1 className="catalog-title">{onlyFavorites ? 'Tus anuncios guardados' : 'Todos los anuncios disponibles'}</h1><label className="sort">Ordenar por<select value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Más recientes</option><option value="low">Menor precio</option><option value="high">Mayor precio</option></select></label></div>
       <div className="filters"><span className="filter-label"><Icon name="sliders" /> Filtrar</span><label>Operación<select value={operation} onChange={e => setOperation(e.target.value)}><option>Todas</option><option>Venta</option><option>Alquiler</option><option>Anticrético</option></select></label><label>Precio máximo (Bs)<input type="number" min="0" value={max} onChange={e => setMax(e.target.value)} placeholder="Sin límite" /></label><button className="text-button" onClick={reset}>Limpiar filtros</button>{onlyFavorites && <Link href="/" className="text-button">Ver todos</Link>}<span className="count" role="status">{filtered.length} {filtered.length === 1 ? 'anuncio' : 'anuncios'}</span></div>
       {storageMessage && <p role="status">{storageMessage}</p>}
       <div className="grid">{filtered.map(x => <article className="card" key={x.id}><div className="card-image"><Link href={'/anuncios/' + x.id} className="photo-placeholder">{x.image ? <Image src={x.image} alt={'Foto de ' + x.title} fill unoptimized sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 33vw" /> : 'Fotografías próximamente'}</Link><span className={'badge ' + (x.operation === 'Alquiler' ? 'rental' : '')}>{x.operation}</span><button className={'heart ' + (favorites.includes(x.id) ? 'saved' : '')} aria-label={(favorites.includes(x.id) ? 'Quitar de guardados: ' : 'Guardar: ') + x.title} aria-pressed={favorites.includes(x.id)} onClick={() => toggle(x.id)}><Icon name="heart" fill={favorites.includes(x.id) ? 'currentColor' : 'none'} /></button></div><div className="card-body"><p className="card-category">{x.category}</p><Link className="card-title" href={'/anuncios/' + x.id}>{x.title}</Link><p className="price">{money(x.price)}{x.operation === 'Alquiler' && <small> / mes</small>}</p><p className="facts">{x.facts.join(' · ')}</p><div className="card-bottom"><span><Icon name="pin" /> {x.zone}</span><span>San Julián</span></div></div></article>)}</div>
       {!filtered.length && <div className="empty"><span className="empty-icon"><Icon name="search" /></span><h3>{onlyFavorites ? 'No hay guardados con estos filtros' : 'Todavía no hay anuncios con estos filtros'}</h3><p>Prueba otra búsqueda o cambia los filtros. También puedes ser de los primeros en publicar.</p><div className="empty-actions"><button className="button" onClick={reset}>Limpiar filtros</button><Link className="button empty-publish" href="/publicar">Publicar anuncio <Icon name="arrow" /></Link></div></div>}
     </section>
 
-    <section className="publish-banner"><div><p className="eyebrow">TU PRÓXIMA OPORTUNIDAD EMPIEZA AQUÍ</p><h2>¿Tienes algo para ofrecer?</h2><p>Publica tu anuncio y conecta con personas de San Julián.</p></div><Link href="/publicar" className="button light">Publicar anuncio <Icon name="arrow" /></Link></section>
   </main>;
 }
