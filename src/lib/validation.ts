@@ -4,6 +4,7 @@ export const listingSchema = z.object({
   category: z.enum(['Motos','Vehículos','Lotes','Casas y departamentos','Electrónicos','Otros']),
   operation: z.enum(['Venta','Alquiler','Anticrético']),
   price: z.coerce.number().finite().positive().max(999999999),
+  currency: z.enum(['BOB','USD']).default('BOB'),
   zone: z.string().trim().min(2).max(100),
   description: z.string().trim().min(20).max(3000),
   contactName: z.string().trim().min(2).max(80),

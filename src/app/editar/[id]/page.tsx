@@ -21,6 +21,7 @@ export default async function EditListing({ params }: { params: Promise<{ id: st
     category: listing.category,
     operation: listing.operation,
     price: String(listing.price),
+    currency: listing.currency,
     zone: listing.zone,
     description: listing.description,
     contactName: listing.contactName,

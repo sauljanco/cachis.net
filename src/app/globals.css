@@ -271,3 +271,16 @@ footer{max-width:1232px;margin:auto;padding:30px 0 34px;border-color:#e0e9df}foo
   .header .nav-user .nav-user-label{font-size:12px;max-width:70px}
   .header .button.small{font-size:12px;min-height:38px;padding:7px 10px}
 }
+
+.filters input:disabled{background:#f3f6f3;color:var(--muted);cursor:not-allowed}
+.price-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media(max-width:650px){
+  .form-grid .price-fields{grid-column:auto;gap:9px}
+  .price-fields select{font-size:13px}
+  .marketplace .filters .filter-operation{grid-column:1;grid-row:1}
+  .marketplace .filters .filter-currency{grid-column:2;grid-row:1}
+  .marketplace .filters .filter-max{grid-column:1/-1;grid-row:2}
+  .marketplace .filters .text-button{grid-column:2;grid-row:3}
+  .marketplace .filters .count{grid-column:1;grid-row:3}
+  .marketplace .filters .favorites-all{grid-column:1/-1;grid-row:4}
+}

@@ -28,7 +28,7 @@ export default async function Detail({params}:Props) {
         <div className="detail-summary">
           <p className="eyebrow">{listing.category} · {listing.operation}</p>
           <h1>{listing.title}</h1>
-          <p className="price">{money(listing.price)}{listing.operation==='Alquiler'&&<small> / mes</small>}</p>
+          <p className="price">{money(listing.price,listing.currency)}{listing.operation==='Alquiler'&&<small> / mes</small>}</p>
           {listing.operation==='Anticrético'&&<p>Monto del anticrético, no mensualidad.</p>}
           <p className="detail-zone">◎ {listing.zone}, San Julián, Santa Cruz</p>
         </div>
