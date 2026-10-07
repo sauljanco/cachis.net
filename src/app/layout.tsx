@@ -28,7 +28,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
         <Link href="/?favoritos=1" className="nav-favorites" aria-label="Guardados"><Icon name="heart" /><span>Guardados</span></Link>
         <Link href="/mis-anuncios" className="nav-account">Mis anuncios</Link>
         <AccountNav />
-        <Link href="/publicar" className="button small"><Icon name="plus" /><span>Publicar anuncio</span></Link>
+        <Link href="/publicar" className="button small"><Icon name="plus" /><span className="publish-label-desktop">Publicar anuncio</span><span className="publish-label-mobile">Publicar</span></Link>
       </nav>
     </header>
     {children}
