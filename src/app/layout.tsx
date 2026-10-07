@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/components/icon';
+import AccountNav from '@/components/account-nav';
 import ServiceWorkerRegistration from '@/components/service-worker-registration';
 import './globals.css';
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       <nav aria-label="Navegación principal">
         <Link href="/?favoritos=1" className="nav-favorites" aria-label="Guardados"><Icon name="heart" /><span>Guardados</span></Link>
         <Link href="/mis-anuncios" className="nav-account">Mis anuncios</Link>
-        <Link href="/cuenta" className="nav-account nav-user" aria-label="Cuenta"><Icon name="user" /><span>Cuenta</span></Link>
+        <AccountNav />
         <Link href="/publicar" className="button small"><Icon name="plus" /><span>Publicar anuncio</span></Link>
       </nav>
     </header>

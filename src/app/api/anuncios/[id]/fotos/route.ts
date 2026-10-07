@@ -35,9 +35,9 @@ export async function POST(request:NextRequest,{params}:Context){
     image=await sharp(input,{limitInputPixels:20_000_000}).rotate().resize({width:1600,height:1600,fit:'inside',withoutEnlargement:true}).webp({quality:78}).toBuffer();
   }catch{return NextResponse.json({error:'No pudimos procesar esa foto.'},{status:400});}
   const existing=await sql`SELECT position FROM cachis.listing_photos WHERE listing_id=${id} ORDER BY position`;
-  if(existing.length>=5)return NextResponse.json({error:'Máximo 5 fotos por anuncio.'},{status:409});
-  const position=Array.from({length:5},(_,i)=>i).find(i=>!existing.some(x=>Number(x.position)===i));
-  if(position===undefined)return NextResponse.json({error:'Máximo 5 fotos por anuncio.'},{status:409});
+  if(existing.length>=3)return NextResponse.json({error:'Máximo 3 fotos por anuncio.'},{status:409});
+  const position=Array.from({length:3},(_,i)=>i).find(i=>!existing.some(x=>Number(x.position)===i));
+  if(position===undefined)return NextResponse.json({error:'Máximo 3 fotos por anuncio.'},{status:409});
   const key=`listings/${id}/${randomUUID()}.webp`;
   const client=storage();
   await client.send(new PutObjectCommand({Bucket:bucket,Key:key,Body:image,ContentType:'image/webp'}));
