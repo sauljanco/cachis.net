@@ -14,6 +14,8 @@ const categories = [
   { name: 'Vehículos', icon: 'car' },
   { name: 'Lotes', icon: 'land' },
   { name: 'Casas y departamentos', icon: 'home' },
+  { name: 'Electrónicos', icon: 'electronics' },
+  { name: 'Otros', icon: 'other' },
 ] as const;
 
 export default function Marketplace({ listings }: { listings: Listing[] }) {
@@ -57,8 +59,7 @@ export default function Marketplace({ listings }: { listings: Listing[] }) {
     <section aria-label="Buscar anuncios" className="search-area">
       <div className="search-row">
         <label className="search-input"><Icon name="search" /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca una moto, un lote, una casa..." aria-label="Buscar anuncios" /></label>
-        <span className="search-location"><Icon name="pin" /> San Julián</span>
-        <a href="#resultados" className="button search-submit">Buscar <Icon name="arrow" /></a>
+        <a href="#resultados" className="button search-submit" aria-label="Ver resultados de búsqueda"><Icon name="arrow" /></a>
       </div>
       <div className="category-heading"><span>Explora por categoría</span><span>Encuentra lo que necesitas, cerca de casa.</span></div>
       <div className="categories" aria-label="Categorías">{categories.map(c => <button key={c.name} type="button" aria-pressed={category === c.name} className={category === c.name ? 'category active' : 'category'} onClick={() => setCategory(c.name)}><span className="category-icon"><CategoryIcon name={c.icon} /></span><span>{c.name}</span></button>)}</div>

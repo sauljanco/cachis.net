@@ -1,7 +1,7 @@
 import { z } from 'zod';
 export const listingSchema = z.object({
   title: z.string().trim().min(8).max(100),
-  category: z.enum(['Motos','Vehículos','Lotes','Casas y departamentos']),
+  category: z.enum(['Motos','Vehículos','Lotes','Casas y departamentos','Electrónicos','Otros']),
   operation: z.enum(['Venta','Alquiler','Anticrético']),
   price: z.coerce.number().finite().positive().max(999999999),
   zone: z.string().trim().min(2).max(100),

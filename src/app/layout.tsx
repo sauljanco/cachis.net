@@ -8,7 +8,7 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://cachis.net'),
   title: { default: 'cachis.net | Compra y vende en San Julián', template: '%s | cachis.net' },
-  description: 'Motos, vehículos, lotes, alquileres y anticréticos en San Julián, Santa Cruz. Precios en bolivianos.',
+  description: 'Motos, vehículos, inmuebles, electrónicos y más en San Julián, Santa Cruz. Precios en bolivianos.',
   robots: { index: false, follow: false },
 };
 export const viewport: Viewport = { themeColor: '#103f35' };
@@ -32,6 +32,6 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       </nav>
     </header>
     {children}
-    <footer><Brand /><p>De aquí, para los de aquí.</p><span>San Julián · Santa Cruz · Bolivia</span><small>Confirma la información de cada oferta con su anunciante.</small></footer>
+    <footer><Brand /><p>De aquí, para los de aquí.</p><Link href="/?favoritos=1" className="footer-favorites">Guardados</Link><span>San Julián · Santa Cruz · Bolivia</span><small>Confirma la información de cada oferta con su anunciante.</small></footer>
   </body></html>;
 }
