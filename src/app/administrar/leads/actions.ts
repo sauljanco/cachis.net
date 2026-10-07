@@ -31,14 +31,17 @@ export async function createLead(input: unknown) {
   const d = parsed.data;
   const sql = database();
   if (Boolean(d.nextStep) !== Boolean(d.followUpAt)) return { error: 'Indica tanto el próximo paso como su fecha, o deja ambos vacíos.' };
-  const result = await sql`INSERT INTO cachis.leads (listing_id, contact_name, phone, interest, source, notes, next_step, follow_up_at, created_by)
+  const result = await sql`WITH created AS (
+    INSERT INTO cachis.leads (listing_id, contact_name, phone, interest, source, notes, next_step, follow_up_at, created_by)
     SELECT l.id, ${d.contactName}, ${d.phone || null}, ${d.interest}, ${d.source}, ${d.notes}, ${d.nextStep}, ${d.followUpAt || null}::timestamptz, ${user.id}
     FROM (SELECT ${d.listingId || null}::uuid AS id) l
     WHERE l.id IS NULL OR EXISTS (SELECT 1 FROM cachis.listings WHERE id=l.id)
-    RETURNING id`;
+    RETURNING id
+  ) INSERT INTO cachis.lead_activities (lead_id,kind,detail,created_by)
+    SELECT id,'Estado','Contacto registrado en el CRM.',${user.id} FROM created RETURNING lead_id`;
   if (!result.length) return { error: 'No encontramos el anuncio seleccionado.' };
-  revalidatePath('/administrar/leads');
-  return { success: true };
+  revalidatePath('/administrar/crm');
+  return { success: true, id: String(result[0].lead_id) };
 }
 
 export async function updateLead(id: string, input: unknown) {
@@ -52,10 +55,33 @@ export async function updateLead(id: string, input: unknown) {
   if (Boolean(parsed.data.nextStep) !== Boolean(parsed.data.followUpAt)) return { error: 'Indica tanto el próximo paso como su fecha, o deja ambos vacíos.' };
   if (parsed.data.status === 'Perdido' && !parsed.data.notes) return { error: 'Registra el motivo de pérdida en la nota interna.' };
   const finished = ['Cerrado', 'Perdido'].includes(parsed.data.status);
-  const rows = await database()`UPDATE cachis.leads SET status=${parsed.data.status},notes=${parsed.data.notes},
+  const sql = database();
+  const before = await sql`SELECT status FROM cachis.leads WHERE id=${id}`;
+  if (!before.length) return { error: 'El contacto ya no existe.' };
+  const rows = await sql`UPDATE cachis.leads SET status=${parsed.data.status},notes=${parsed.data.notes},
     next_step=${finished ? '' : parsed.data.nextStep},follow_up_at=${finished ? null : parsed.data.followUpAt || null}::timestamptz,updated_at=now()
     WHERE id=${id} RETURNING id`;
   if (!rows.length) return { error: 'La oportunidad ya no existe.' };
-  revalidatePath('/administrar/leads');
+  if (before[0].status !== parsed.data.status) {
+    await sql`INSERT INTO cachis.lead_activities (lead_id,kind,detail,created_by)
+      VALUES (${id},'Estado',${`Etapa cambiada de ${before[0].status} a ${parsed.data.status}.`},${user.id})`;
+  }
+  revalidatePath('/administrar/crm');
+  revalidatePath(`/administrar/crm/${id}`);
+  return { success: true };
+}
+
+export async function addLeadActivity(id: string, input: unknown) {
+  const user = await authorizedAdmin();
+  if (!user || !uuid.safeParse(id).success) return { error: 'Acción no permitida.' };
+  const parsed = z.object({
+    kind: z.enum(['Nota','Llamada','WhatsApp','Visita','Correo']),
+    detail: z.string().trim().min(3).max(1000),
+  }).safeParse(input);
+  if (!parsed.success) return { error: 'Indica el tipo de gestión y una descripción de 3 a 1000 caracteres.' };
+  const rows = await database()`INSERT INTO cachis.lead_activities (lead_id,kind,detail,created_by)
+    SELECT id,${parsed.data.kind},${parsed.data.detail},${user.id} FROM cachis.leads WHERE id=${id} RETURNING id`;
+  if (!rows.length) return { error: 'El contacto ya no existe.' };
+  revalidatePath(`/administrar/crm/${id}`);
   return { success: true };
 }
