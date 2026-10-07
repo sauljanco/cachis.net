@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Icon from '@/components/icon';
 import AccountNav from '@/components/account-nav';
 import ServiceWorkerRegistration from '@/components/service-worker-registration';
+import 'leaflet/dist/leaflet.css';
 import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://cachis.net'),

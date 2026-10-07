@@ -240,3 +240,34 @@ footer{max-width:1232px;margin:auto;padding:30px 0 34px;border-color:#e0e9df}foo
   .marketplace .search-submit{flex-basis:39px;min-width:39px;width:39px;min-height:39px;margin:3px;border-radius:8px}
   footer .footer-favorites{display:inline-flex;align-items:center;color:var(--green);font-size:11px;font-weight:700}
 }
+
+/* Property location picker: point selection stays visual while coordinates stay internal. */
+.property-map-picker{min-width:0;overflow:hidden;border:1px solid #dbe9d6;border-radius:13px;background:#f8faf6}
+.property-map-picker .map-form-intro{border:0;border-radius:0;padding:14px 16px 12px;background:transparent}
+.property-map-picker .map-form-intro strong{font-size:14px}
+.property-map-picker .map-form-intro strong span{font-weight:400;color:var(--muted)}
+.property-map-canvas{height:300px;width:100%;background:#e8efe7;z-index:0}
+.property-map-pin{display:block;width:27px;height:27px;border:4px solid #fff;border-radius:50% 50% 50% 0;background:#124d3e;box-shadow:0 2px 9px #102e2559;transform:rotate(-45deg)}
+.property-map-pin:after{content:'';position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;left:6px;top:6px}
+.property-map-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px 12px;padding:10px 14px;font-size:12px}
+.property-map-actions span{flex:1 1 100%;color:var(--muted)}
+.property-map-actions button{border:1px solid #c7d9c8;background:white;color:var(--green);border-radius:7px;min-height:36px;padding:6px 10px;font-size:12px;font-weight:700}
+.property-map-actions button:hover{background:#edf5e9}
+@media(max-width:650px){
+  .header{gap:clamp(4px,1.3vw,9px);padding:8px clamp(8px,2.8vw,15px);min-height:58px}
+  .header .brand img{width:clamp(78px,24vw,108px)}
+  .header nav{flex:1;justify-content:flex-end;gap:clamp(4px,1.4vw,9px)}
+  .header nav>a.nav-account{font-size:clamp(10px,2.9vw,13px);font-weight:750;white-space:nowrap;letter-spacing:-.02em}
+  .header .nav-user{display:inline-flex;align-items:center;gap:4px;padding:4px 5px;border:1px solid #dce8de;border-radius:18px;background:#f5f8f3}
+  .header .nav-user .nav-avatar{display:inline-grid;width:22px;height:22px;font-size:11px;flex:none}
+  .header .nav-user .nav-user-label{font-size:clamp(10px,2.8vw,12px);font-weight:750;max-width:55px}
+  .header .button.small{min-height:35px;padding:6px clamp(7px,2vw,11px);font-size:clamp(10px,2.8vw,12px);font-weight:750}
+  .property-map-canvas{height:240px}
+}
+@media(min-width:370px) and (max-width:650px){
+  .header .brand img{width:clamp(115px,31vw,138px)}
+  .header nav{gap:clamp(6px,1.8vw,12px)}
+  .header nav>a.nav-account{font-size:12px}
+  .header .nav-user .nav-user-label{font-size:12px;max-width:70px}
+  .header .button.small{font-size:12px;min-height:38px;padding:7px 10px}
+}
