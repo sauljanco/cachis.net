@@ -5,6 +5,7 @@ import Icon from '@/components/icon';
 import ServiceWorkerRegistration from '@/components/service-worker-registration';
 import './globals.css';
 export const metadata: Metadata = {
+  metadataBase: new URL('https://cachis.net'),
   title: { default: 'cachis.net | Compra y vende en San Julián', template: '%s | cachis.net' },
   description: 'Motos, vehículos, lotes, alquileres y anticréticos en San Julián, Santa Cruz. Precios en bolivianos.',
   robots: { index: false, follow: false },

@@ -11,6 +11,7 @@ Marketplace móvil para iniciar en San Julián, Santa Cruz, Bolivia. Anuncios de
 - Fotos procesadas a WebP, máximo 4 MB de entrada y cinco por anuncio, en el bucket privado `anuncios` de Neon Object Storage. El límite deja margen para el cuerpo multipart de Vercel Functions (4,5 MB).
 - Panel de moderación protegido por `ADMIN_USER_IDS`.
 - Los usuarios registrados pueden reportar anuncios publicados; el administrador revisa cada reporte y puede descartarlo o pausar el anuncio.
+- El panel privado de oportunidades permite registrar contactos comerciales, etapas, próximos pasos y seguimientos pendientes.
 
 El repositorio no contiene credenciales. `src/lib/listings.ts` conserva los tipos y utilidades del catálogo. Los anuncios de demostración fueron retirados.
 
@@ -34,15 +35,15 @@ Abre `http://localhost:3000` (con `localhost`, como indica `APP_URL`). Neon Auth
 - Agregar favoritos por cuenta, controles de abuso adicionales, pruebas de recuperación y políticas de privacidad.
 - Verificar la instalación de la PWA en Android e iOS y decidir si conviene guardar contenido público para lectura sin conexión. La pantalla offline actual no almacena anuncios ni datos de cuentas.
 - Completar SEO y analítica. La indexación está desactivada durante el piloto.
-- Verificar en producción el recorrido de cuenta, anuncio, foto, reporte y moderación; después conectar el dominio, respaldar y probar restauración. El sitio de pruebas está publicado en Vercel.
+- Verificar en producción el recorrido de cuenta, anuncio, foto, reporte y moderación; respaldar y probar restauración. El dominio oficial ya está conectado a Vercel.
 
 El roadmap entregado por el propietario ordena el trabajo por fases: estabilización, marketplace, confianza, gestión comercial, empresas, monetización y escala. El MVP no incluye pagos de compraventas.
 
 ## Despliegue actual en Vercel
 
-El proyecto está conectado a GitHub y se despliega en `https://cachis-net.vercel.app`. Neon proporciona PostgreSQL, autenticación y almacenamiento. Antes de enviar nuevos cambios, ejecutar `npm run db:migrate` si hay migraciones nuevas; después verificar `npm run typecheck` y `npm run build`.
+El proyecto está conectado a GitHub y se publica en `https://cachis.net`. `https://www.cachis.net` redirige permanentemente al dominio principal. `https://cachis-net.vercel.app` sigue como dirección técnica de Vercel. Neon proporciona PostgreSQL, autenticación y almacenamiento. Antes de enviar nuevos cambios, ejecutar `npm run db:migrate` si hay migraciones nuevas; después verificar `npm run typecheck` y `npm run build`.
 
-Las variables privadas de producción son `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`. `APP_URL` debe coincidir con la URL pública. Al conectar `cachis.net`, cambiar `APP_URL` y registrar el dominio en Neon Auth. Nunca subir valores de `.env.local` a GitHub.
+Las variables privadas de producción son `DATABASE_URL`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`, `ADMIN_USER_IDS`, `NEON_STORAGE_ENDPOINT`, `NEON_STORAGE_ACCESS_KEY_ID`, `NEON_STORAGE_SECRET_ACCESS_KEY` y `NEON_STORAGE_REGION`. `APP_URL` apunta a `https://cachis.net` y ese origen está en la lista de dominios confiables de Neon Auth. Nunca subir valores de `.env.local` a GitHub.
 
 El equipo actual aparece en Vercel Hobby. Según las [reglas de Vercel](https://vercel.com/docs/limits/fair-use-guidelines), Hobby se limita a uso personal no comercial; antes de abrir el marketplace comercial al público se requiere Pro o Enterprise. No se ha contratado un plan en este repositorio.
 
