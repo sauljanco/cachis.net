@@ -26,7 +26,7 @@ function GoogleMark() {
   </svg>;
 }
 
-export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
+export default function AccountForm({signedIn=false,linkExisting=false}:{signedIn?:boolean;linkExisting?:boolean}){
   const router=useRouter();
   const [message,setMessage]=useState('');
   const [pending,startTransition]=useTransition();
@@ -43,6 +43,16 @@ export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
     });
   }
 
+  function linkGoogle(){
+    setMessage('');
+    startTransition(async()=>{
+      try {
+        const result=await authClient.linkSocial({provider:'google',callbackURL:'/mis-anuncios'});
+        if(result.error)setMessage('No pudimos conectar Google a tu cuenta. Intenta de nuevo.');
+      }catch{setMessage('No pudimos conectar Google a tu cuenta. Intenta de nuevo.');}
+    });
+  }
+
   function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
     const data=new FormData(e.currentTarget);
@@ -53,12 +63,12 @@ export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
       try {
         const result=await authClient.signIn.email({email,password});
         if(result.error){setMessage(loginError(result.error));return;}
-        router.push(destination());router.refresh();
+        router.push(linkExisting?'/cuenta':destination());router.refresh();
       }catch(error){setMessage(loginError(error));}
     });
   }
 
-  if(signedIn)return <><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message}</p></>;
+  if(signedIn)return <div className="auth-linked-account"><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><button className="google-signin" type="button" disabled={pending} onClick={linkGoogle}><GoogleMark />{pending?'Conectando…':'Vincular mi cuenta de Google'}</button><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message}</p></div>;
 
   return <div className="auth-entry">
     <div className="auth-primary">
@@ -67,7 +77,8 @@ export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
       <button className="google-signin" type="button" onClick={signInWithGoogle} disabled={pending}><GoogleMark />{pending?'Conectando…':'Continuar con Google'}</button>
       <p className="auth-privacy">Tus anuncios siguen visibles para todos. Te pediremos iniciar sesión cuando quieras publicar o gestionar tu cuenta.</p>
     </div>
-    <details className="auth-alternative"><summary>¿Ya tenías una cuenta con contraseña?</summary>
+    <details className="auth-alternative" open={linkExisting}><summary>¿Ya tenías una cuenta con contraseña?</summary>
+      {linkExisting&&<p>Entra con tu contraseña anterior. Después podrás vincular Google sin perder tus anuncios.</p>}
       <form className="draft-form" onSubmit={submit}><div className="form-grid"><label className="wide">Correo electrónico<input name="email" type="email" required autoComplete="email" /></label><label className="wide">Contraseña<input name="password" type="password" required autoComplete="current-password" /></label></div><button className="button" type="submit" disabled={pending}>Iniciar sesión</button><p className="recovery-link"><Link href="/recuperar-clave">¿Olvidaste tu contraseña?</Link></p></form>
     </details>
     <p role="status" className="form-status">{message}</p>
