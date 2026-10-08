@@ -20,7 +20,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata> {
   const summary=listing.description.replace(/\s+/g,' ').trim().slice(0,150);
   const description=`${price} · ${listing.category} en ${listing.operation.toLowerCase()} · ${listing.zone}, San Julián, Santa Cruz.${summary ? ` ${summary}` : ''}`;
   const image=listing.photos[0]
-    ? {url:`https://cachis.net${listing.photos[0]}/social`,width:1200,height:630,alt:`Fotografía de ${listing.title}`,type:'image/jpeg'}
+    ? {url:`https://cachis.net${listing.photos[0]}/social?v=2`,width:1200,height:630,alt:`Fotografía de ${listing.title}`,type:'image/jpeg'}
     : {url:'https://cachis.net/brand-logo.png',alt:'cachis.net'};
 
   return {
@@ -39,7 +39,7 @@ export default async function Detail({params}:Props) {
   const message=encodeURIComponent(`Hola, vi tu anuncio "${listing.title}" en cachis.net. ¿Sigue disponible?`);
   const whatsapp=`https://wa.me/${listing.whatsapp}?text=${message}`;
   return <main id="contenido" className="container detail">
-    <Link href="/" className="back">← Volver a los anuncios</Link>
+    <nav className="detail-breadcrumb" aria-label="Ruta de navegación"><Link href="/" className="back"><span aria-hidden="true">←</span> Explorar anuncios</Link><span aria-hidden="true" className="breadcrumb-separator">/</span><span>{listing.category}</span></nav>
     <div className="detail-grid">
       <aside className="detail-panel">
         <div className="detail-summary">
@@ -58,9 +58,16 @@ export default async function Detail({params}:Props) {
       <div className="detail-content">
         <ListingGallery photos={listing.photos} title={listing.title}/>
         <section className="detail-description">
+          <p className="section-kicker">INFORMACIÓN DEL ANUNCIO</p>
           <h2>Sobre este anuncio</h2>
           <p className="description">{listing.description}</p>
-          {user?.id!==listing.ownerId&&(user?<ReportForm id={listing.id}/>:<p className="report-section"><Link href="/cuenta">Inicia sesión</Link> para reportar un problema con este anuncio.</p>)}
+          <dl className="listing-specs">
+            <div><dt>Tipo</dt><dd>{listing.category}</dd></div>
+            <div><dt>Operación</dt><dd>{listing.operation}</dd></div>
+            <div><dt>Ubicación</dt><dd>{listing.zone}, San Julián</dd></div>
+            <div><dt>Moneda</dt><dd>{listing.currency === 'BOB' ? 'Bolivianos (Bs)' : 'Dólares (US$)'}</dd></div>
+          </dl>
+          {user?.id!==listing.ownerId&&(user?<details className="report-disclosure"><summary>Reportar un problema con este anuncio</summary><ReportForm id={listing.id}/></details>:<p className="report-section"><Link href="/cuenta">Inicia sesión</Link> para reportar un problema con este anuncio.</p>)}
         </section>
       </div>
     </div>

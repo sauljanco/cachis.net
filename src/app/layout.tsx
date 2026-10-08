@@ -6,6 +6,7 @@ import AccountNav from '@/components/account-nav';
 import ServiceWorkerRegistration from '@/components/service-worker-registration';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
+import './storefront.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://cachis.net'),
   title: { default: 'cachis.net | Compra y vende en San Julián', template: '%s | cachis.net' },
@@ -33,6 +34,9 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       </nav>
     </header>
     {children}
-    <footer><Brand /><p>De aquí, para los de aquí.</p><Link href="/?favoritos=1" className="footer-favorites">Guardados</Link><span>San Julián · Santa Cruz · Bolivia</span><small>Confirma la información de cada oferta con su anunciante.</small></footer>
+    <footer className="site-footer">
+      <div className="footer-main"><div className="footer-identity"><Brand /><p>De aquí, para los de aquí.</p></div><div className="footer-place"><span>Un mercado más cerca de ti</span><strong>San Julián · Santa Cruz · Bolivia</strong><Link href="/?favoritos=1" className="footer-favorites">Ver guardados</Link></div></div>
+      <div className="footer-bottom"><small>© {new Date().getFullYear()} cachis.net. Todos los derechos reservados.</small><small>Confirma la información de cada oferta con su anunciante.</small></div>
+    </footer>
   </body></html>;
 }

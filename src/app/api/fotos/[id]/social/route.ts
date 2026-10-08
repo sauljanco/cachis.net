@@ -21,7 +21,16 @@ export async function GET(_request:Request,{params}:Context) {
     const response=await storage().send(new GetObjectCommand({Bucket:bucket,Key:String(rows[0].object_key)}));
     if (!response.Body) return new NextResponse(null,{status:404});
     const source=Buffer.from(await response.Body.transformToByteArray());
-    const image=await sharp(source).resize(1200,630,{fit:'contain',background:'#f7f8f5'}).jpeg({quality:82}).toBuffer();
+    const {width,height}=await sharp(source).metadata();
+    let image:Buffer;
+    if (width && height && width / height < 1.2) {
+      // Keep portrait products fully visible while using their own photo to fill the sides.
+      const background=await sharp(source).resize(1200,630,{fit:'cover'}).blur(28).modulate({brightness:.7}).toBuffer();
+      const foreground=await sharp(source).resize(1200,630,{fit:'inside'}).toBuffer();
+      image=await sharp(background).composite([{input:foreground,gravity:'centre'}]).jpeg({quality:84}).toBuffer();
+    } else {
+      image=await sharp(source).resize(1200,630,{fit:'cover',position:'centre'}).jpeg({quality:84}).toBuffer();
+    }
     return new NextResponse(new Uint8Array(image),{headers:{
       'Content-Type':'image/jpeg',
       'Cache-Control':'no-store',
