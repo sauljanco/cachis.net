@@ -29,6 +29,6 @@ export async function ownerListings(ownerId: string) {
 }
 export async function ownerListing(id: string, ownerId: string) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
-  const rows = await database()`SELECT l.* FROM cachis.listings l WHERE l.id=${id} AND l.owner_id=${ownerId}`;
+  const rows = await database()`SELECT l.*,(SELECT count(*) FROM cachis.listing_photos p WHERE p.listing_id=l.id) AS photo_count FROM cachis.listings l WHERE l.id=${id} AND l.owner_id=${ownerId}`;
   return rows[0] ? mapRow(rows[0]) : null;
 }
