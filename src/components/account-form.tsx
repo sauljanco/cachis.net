@@ -111,7 +111,7 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
     });
   }
 
-  if(signedIn)return <div className="auth-linked-account">{googleLinked?<p>Tu cuenta de Google está vinculada. Ya puedes iniciar sesión con Google y conservar tus anuncios.</p>:<><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={renderGoogleLink} /><div ref={googleButton} aria-label="Vincular mi cuenta de Google" /></>}<button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message || (pending?'Procesando…':'')}</p></div>;
+  if(signedIn)return <div className="auth-linked-account">{googleLinked?<p className="auth-google-status"><span aria-hidden="true">✓</span> Google conectado</p>:<><p>Conecta Google para entrar sin contraseña y conservar tus anuncios.</p><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={renderGoogleLink} /><div ref={googleButton} aria-label="Vincular mi cuenta de Google" /></>}<button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message || (pending?'Procesando…':'')}</p></div>;
 
   return <div className="auth-entry">
     <div className="auth-primary">
