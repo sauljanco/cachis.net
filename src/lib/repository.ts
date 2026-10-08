@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { database } from './db';
 import type { Listing } from './listings';
 
@@ -13,7 +14,7 @@ export async function publicListings() {
     FROM cachis.listings l WHERE l.status='published' ORDER BY l.created_at DESC LIMIT 100`;
   return rows.map(mapRow).map(({ownerId,status,whatsapp,contactName,photos,photoCount,latitude,longitude,...listing}) => listing);
 }
-export async function findListing(id: string) {
+export const findListing = cache(async (id: string) => {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
   const sql = database();
   const rows = await sql`SELECT l.*,(SELECT p.id FROM cachis.listing_photos p WHERE p.listing_id=l.id ORDER BY p.position LIMIT 1) AS photo_id FROM cachis.listings l WHERE l.id=${id} AND l.status='published'`;
@@ -23,7 +24,7 @@ export async function findListing(id: string) {
   listing.photos = photos.map(photo => '/api/fotos/' + String(photo.id));
   listing.photoCount = listing.photos.length;
   return listing;
-}
+});
 export async function ownerListings(ownerId: string) {
   return (await database()`SELECT l.*,(SELECT p.id FROM cachis.listing_photos p WHERE p.listing_id=l.id ORDER BY p.position LIMIT 1) AS photo_id,(SELECT count(*) FROM cachis.listing_photos p WHERE p.listing_id=l.id) AS photo_count FROM cachis.listings l WHERE l.owner_id=${ownerId} ORDER BY l.created_at DESC LIMIT 100`).map(mapRow);
 }

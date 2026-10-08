@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { money } from '@/lib/listings';
 import { findListing } from '@/lib/repository';
@@ -9,10 +10,26 @@ import ListingMap from '@/components/listing-map';
 
 export const dynamic = 'force-dynamic';
 type Props = {params:Promise<{id:string}>};
-export async function generateMetadata({params}:Props) {
+export async function generateMetadata({params}:Props):Promise<Metadata> {
   const {id}=await params;
   const listing=await findListing(id);
-  return {title:listing?.title||'Anuncio no encontrado'};
+  if (!listing) return {title:'Anuncio no encontrado'};
+
+  const url=`https://cachis.net/anuncios/${listing.id}`;
+  const price=money(listing.price,listing.currency);
+  const summary=listing.description.replace(/\s+/g,' ').trim().slice(0,150);
+  const description=`${price} · ${listing.category} en ${listing.operation.toLowerCase()} · ${listing.zone}, San Julián, Santa Cruz.${summary ? ` ${summary}` : ''}`;
+  const image=listing.photos[0]
+    ? {url:`https://cachis.net${listing.photos[0]}/social`,width:1200,height:630,alt:`Fotografía de ${listing.title}`,type:'image/jpeg'}
+    : {url:'https://cachis.net/brand-logo.png',alt:'cachis.net'};
+
+  return {
+    title:listing.title,
+    description,
+    alternates:{canonical:url},
+    openGraph:{type:'website',locale:'es_BO',siteName:'cachis.net',url,title:listing.title,description,images:[image]},
+    twitter:{card:'summary_large_image',title:listing.title,description,images:[image.url]},
+  };
 }
 export default async function Detail({params}:Props) {
   const {id}=await params;
