@@ -4,6 +4,11 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { authClient } from '@/lib/auth/client';
 
+function destination() {
+  const requested = new URLSearchParams(window.location.search).get('next');
+  return requested && ['/publicar', '/mis-anuncios', '/'].includes(requested) ? requested : '/mis-anuncios';
+}
+
 function loginError(error: unknown) {
   const detail = error && typeof error === 'object' ? error as { status?: number; code?: string; message?: string } : null;
   if (detail?.status === 401 || detail?.code === 'INVALID_EMAIL_OR_PASSWORD' || /invalid email or password/i.test(detail?.message ?? '')) {
@@ -12,27 +17,59 @@ function loginError(error: unknown) {
   return 'No pudimos iniciar sesión. Intenta de nuevo en unos minutos.';
 }
 
+function GoogleMark() {
+  return <svg aria-hidden="true" width="20" height="20" viewBox="0 0 48 48" focusable="false">
+    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 5.38 6.51 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.3 5.48-4.86 7.18l7.73 6C44.32 38.03 46.98 31.68 46.98 24.55z" />
+    <path fill="#FBBC05" d="M10.53 28.59A14.41 14.41 0 0 1 9.75 24c0-1.59.28-3.13.78-4.59l-7.98-6.2A23.9 23.9 0 0 0 0 24c0 3.88.93 7.54 2.56 10.78l7.97-6.19z" />
+    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+  </svg>;
+}
+
 export default function AccountForm({signedIn=false}:{signedIn?:boolean}){
   const router=useRouter();
-  const [mode,setMode]=useState<'login'|'signup'>('login');
   const [message,setMessage]=useState('');
   const [pending,startTransition]=useTransition();
+
   function signOut(){startTransition(async()=>{const result=await authClient.signOut();if(result.error){setMessage('No se pudo cerrar la sesión.');return;}router.refresh();});}
+
+  function signInWithGoogle(){
+    setMessage('');
+    startTransition(async()=>{
+      try {
+        const result=await authClient.signIn.social({provider:'google',callbackURL:destination()});
+        if(result.error)setMessage('No pudimos conectar con Google. Intenta de nuevo.');
+      }catch{setMessage('No pudimos conectar con Google. Intenta de nuevo.');}
+    });
+  }
+
   function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
     const data=new FormData(e.currentTarget);
     const email=String(data.get('email')||'').trim();
     const password=String(data.get('password')||'');
-    const name=String(data.get('name')||'').trim();
     setMessage('');
     startTransition(async()=>{
       try {
-        const result=mode==='login'?await authClient.signIn.email({email,password}):await authClient.signUp.email({email,password,name});
+        const result=await authClient.signIn.email({email,password});
         if(result.error){setMessage(loginError(result.error));return;}
-        router.push('/mis-anuncios');router.refresh();
+        router.push(destination());router.refresh();
       }catch(error){setMessage(loginError(error));}
     });
   }
+
   if(signedIn)return <><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message}</p></>;
-  return <div><div className="auth-tabs"><button type="button" aria-pressed={mode==='login'} onClick={()=>{setMode('login');setMessage('');}}>Iniciar sesión</button><button type="button" aria-pressed={mode==='signup'} onClick={()=>{setMode('signup');setMessage('');}}>Crear cuenta</button></div><form className="draft-form" onSubmit={submit}><div className="form-grid">{mode==='signup'&&<label className="wide">Tu nombre<input name="name" required minLength={2} autoComplete="name" /></label>}<label className="wide">Correo electrónico<input name="email" type="email" required autoComplete="email" /></label><label className="wide">Contraseña<input name="password" type="password" required minLength={8} autoComplete={mode==='login'?'current-password':'new-password'} /></label></div><button className="button" type="submit" disabled={pending}>{pending?'Un momento…':mode==='login'?'Iniciar sesión':'Crear cuenta'}</button>{mode==='login'&&<p className="recovery-link"><Link href="/recuperar-clave">¿Olvidaste tu contraseña?</Link></p>}<p role="status" className="form-status">{message}</p></form></div>;
+
+  return <div className="auth-entry">
+    <div className="auth-primary">
+      <h2>Entra o crea tu cuenta</h2>
+      <p>Usa tu cuenta de Google para publicar y gestionar tus anuncios. Solo te tomará un momento.</p>
+      <button className="google-signin" type="button" onClick={signInWithGoogle} disabled={pending}><GoogleMark />{pending?'Conectando…':'Continuar con Google'}</button>
+      <p className="auth-privacy">Tus anuncios siguen visibles para todos. Te pediremos iniciar sesión cuando quieras publicar o gestionar tu cuenta.</p>
+    </div>
+    <details className="auth-alternative"><summary>¿Ya tenías una cuenta con contraseña?</summary>
+      <form className="draft-form" onSubmit={submit}><div className="form-grid"><label className="wide">Correo electrónico<input name="email" type="email" required autoComplete="email" /></label><label className="wide">Contraseña<input name="password" type="password" required autoComplete="current-password" /></label></div><button className="button" type="submit" disabled={pending}>Iniciar sesión</button><p className="recovery-link"><Link href="/recuperar-clave">¿Olvidaste tu contraseña?</Link></p></form>
+    </details>
+    <p role="status" className="form-status">{message}</p>
+  </div>;
 }

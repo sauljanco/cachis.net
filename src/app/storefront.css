@@ -191,6 +191,44 @@
 .report-disclosure .report-section { margin-top: 12px; padding-top: 0; border: 0; }
 .report-disclosure .report-section h2 { font-size: 19px; }
 
+.account-page { min-height: 65vh; padding-bottom: 75px; }
+.account-page h1 { margin-bottom: 25px; }
+.auth-entry { max-width: 550px; }
+.auth-primary {
+  padding: 29px;
+  border: 1px solid #dfe9df;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 14px 38px #143a2710;
+}
+.auth-primary h2 { margin: 0 0 10px; font-size: 27px; letter-spacing: -.035em; }
+.auth-primary > p { color: #566e5e; font-size: 15px; line-height: 1.55; }
+.google-signin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 25px;
+  padding: 11px 18px;
+  border: 1px solid #cbd9cc;
+  border-radius: 11px;
+  background: #fff;
+  color: #203b2e;
+  font-size: 16px;
+  font-weight: 750;
+  box-shadow: 0 3px 10px #173b2610;
+}
+.google-signin:hover { background: #f2f7f0; border-color: #93b99b; }
+.google-signin:disabled { cursor: wait; opacity: .65; }
+.auth-primary .auth-privacy { margin: 16px 0 0; font-size: 12px; }
+.auth-alternative { margin: 20px 4px 0; }
+.auth-alternative summary { color: #37624a; font-size: 14px; font-weight: 700; cursor: pointer; }
+.auth-alternative[open] summary { margin-bottom: 14px; }
+.auth-alternative .draft-form { padding: 19px; border: 1px solid #e0e9df; border-radius: 14px; background: #fff; }
+.auth-entry > .form-status { margin-top: 12px; }
+
 .site-footer {
   display: block;
   max-width: none;
@@ -210,6 +248,16 @@
 .site-footer .footer-favorites:hover { text-decoration: underline; }
 .site-footer .footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; border-top: 1px solid #d7e3d7; }
 .site-footer .footer-bottom small { width: auto; padding: 0; border: 0; color: #5e7467; font-size: 12px; }
+.footer-legal { display: flex; flex-wrap: wrap; gap: 16px; }
+.footer-legal a { color: var(--green); font-size: 12px; font-weight: 700; }
+.footer-legal a:hover { text-decoration: underline; }
+.policy-page { max-width: 850px; padding-top: 54px; padding-bottom: 70px; }
+.policy-page h1 { margin: 22px 0 5px; }
+.policy-page .lead { margin-bottom: 32px; }
+.policy-page section { border-top: 1px solid #d7e3d7; padding: 22px 0; }
+.policy-page h2 { margin-bottom: 9px; font-size: 20px; }
+.policy-page section p { color: #35564a; line-height: 1.75; }
+.policy-page section a { color: var(--green); font-weight: 700; text-decoration: underline; }
 
 @media (max-width: 1100px) {
   .marketplace .categories { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -268,6 +316,12 @@
   .listing-specs dd { font-size: 12px; }
   .detail-description .report-section { font-size: 12px; }
   .detail-contact .notice { font-size: 12px; }
+  .account-page { padding-bottom: 45px; }
+  .account-page h1 { margin-bottom: 19px; }
+  .auth-primary { padding: 22px; }
+  .auth-primary h2 { font-size: 23px; }
+  .auth-primary > p { font-size: 14px; }
+  .google-signin { font-size: 15px; }
 
   .site-footer { padding: 25px 16px 20px; }
   .site-footer .footer-main { padding-bottom: 18px; gap: 18px; }

@@ -36,7 +36,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     {children}
     <footer className="site-footer">
       <div className="footer-main"><div className="footer-identity"><Brand /><p>De aquí, para los de aquí.</p></div><div className="footer-place"><span>Un mercado más cerca de ti</span><strong>San Julián · Santa Cruz · Bolivia</strong><Link href="/?favoritos=1" className="footer-favorites">Ver guardados</Link></div></div>
-      <div className="footer-bottom"><small>© {new Date().getFullYear()} cachis.net. Todos los derechos reservados.</small><small>Confirma la información de cada oferta con su anunciante.</small></div>
+      <div className="footer-bottom"><small>© {new Date().getFullYear()} cachis.net. Todos los derechos reservados.</small><div className="footer-legal"><Link href="/privacidad">Privacidad</Link><Link href="/terminos">Condiciones de uso</Link></div><small>Confirma la información de cada oferta con su anunciante.</small></div>
     </footer>
   </body></html>;
 }
