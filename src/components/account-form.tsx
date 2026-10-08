@@ -1,8 +1,24 @@
 'use client';
 import Link from 'next/link';
+import Script from 'next/script';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useCallback, useRef, useState, useTransition } from 'react';
 import { authClient } from '@/lib/auth/client';
+
+const googleClientId = '983543200196-1qhm8bskahaav2eq40l3cvqjbrd53p43.apps.googleusercontent.com';
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize(options: { client_id: string; callback: (response: { credential: string }) => void }): void;
+          renderButton(element: HTMLElement, options: { theme: string; size: string; text: string; locale: string }): void;
+        };
+      };
+    };
+  }
+}
 
 function destination() {
   const requested = new URLSearchParams(window.location.search).get('next');
@@ -30,6 +46,7 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
   const router=useRouter();
   const [message,setMessage]=useState('');
   const [pending,startTransition]=useTransition();
+  const googleButton=useRef<HTMLDivElement>(null);
 
   function signOut(){startTransition(async()=>{const result=await authClient.signOut();if(result.error){setMessage('No se pudo cerrar la sesión.');return;}router.refresh();});}
 
@@ -43,15 +60,30 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
     });
   }
 
-  function linkGoogle(){
-    setMessage('');
-    startTransition(async()=>{
-      try {
-        const result=await authClient.linkSocial({provider:'google',callbackURL:'/mis-anuncios'});
-        if(result.error)setMessage('No pudimos conectar Google a tu cuenta. Intenta de nuevo.');
-      }catch{setMessage('No pudimos conectar Google a tu cuenta. Intenta de nuevo.');}
+  const renderGoogleLink = useCallback(() => {
+    if (!signedIn || !googleButton.current || !window.google) return;
+    googleButton.current.replaceChildren();
+    window.google.accounts.id.initialize({
+      client_id: googleClientId,
+      callback: ({credential}) => {
+        setMessage('');
+        startTransition(async () => {
+          try {
+            const result = await authClient.linkSocial({provider:'google',idToken:{token:credential}});
+            if (result.error) {
+              setMessage('No pudimos vincular Google a tu cuenta. Comprueba que seleccionaste el mismo correo.');
+              return;
+            }
+            setMessage('Google quedó vinculado. Ya puedes entrar con esa cuenta.');
+            router.refresh();
+          } catch {
+            setMessage('No pudimos vincular Google a tu cuenta. Intenta de nuevo.');
+          }
+        });
+      },
     });
-  }
+    window.google.accounts.id.renderButton(googleButton.current,{theme:'outline',size:'large',text:'continue_with',locale:'es'});
+  }, [signedIn, router]);
 
   function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
@@ -68,7 +100,7 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
     });
   }
 
-  if(signedIn)return <div className="auth-linked-account"><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><button className="google-signin" type="button" disabled={pending} onClick={linkGoogle}><GoogleMark />{pending?'Conectando…':'Vincular mi cuenta de Google'}</button><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message}</p></div>;
+  if(signedIn)return <div className="auth-linked-account"><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={renderGoogleLink} /><div ref={googleButton} aria-label="Vincular mi cuenta de Google" /><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{pending?'Vinculando tu cuenta…':message}</p></div>;
 
   return <div className="auth-entry">
     <div className="auth-primary">
