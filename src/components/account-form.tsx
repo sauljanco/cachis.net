@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
-import { useCallback, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { authClient } from '@/lib/auth/client';
 
 const googleClientId = '983543200196-1qhm8bskahaav2eq40l3cvqjbrd53p43.apps.googleusercontent.com';
@@ -45,8 +45,18 @@ function GoogleMark() {
 export default function AccountForm({signedIn=false,linkExisting=false}:{signedIn?:boolean;linkExisting?:boolean}){
   const router=useRouter();
   const [message,setMessage]=useState('');
+  const [googleLinked,setGoogleLinked]=useState(false);
   const [pending,startTransition]=useTransition();
   const googleButton=useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!signedIn) return;
+    let active = true;
+    authClient.listAccounts().then(({data}) => {
+      if (active && data?.some((account) => account.providerId === 'google')) setGoogleLinked(true);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [signedIn]);
 
   function signOut(){startTransition(async()=>{const result=await authClient.signOut();if(result.error){setMessage('No se pudo cerrar la sesión.');return;}router.refresh();});}
 
@@ -74,6 +84,7 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
               setMessage('No pudimos vincular Google a tu cuenta. Comprueba que seleccionaste el mismo correo.');
               return;
             }
+            setGoogleLinked(true);
             setMessage('Google quedó vinculado. Ya puedes entrar con esa cuenta.');
             router.refresh();
           } catch {
@@ -100,7 +111,7 @@ export default function AccountForm({signedIn=false,linkExisting=false}:{signedI
     });
   }
 
-  if(signedIn)return <div className="auth-linked-account"><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={renderGoogleLink} /><div ref={googleButton} aria-label="Vincular mi cuenta de Google" /><button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{pending?'Vinculando tu cuenta…':message}</p></div>;
+  if(signedIn)return <div className="auth-linked-account">{googleLinked?<p>Tu cuenta de Google está vinculada. Ya puedes iniciar sesión con Google y conservar tus anuncios.</p>:<><p>Si antes entrabas con contraseña, conecta tu Google aquí una sola vez. Conservarás tus anuncios y el mismo perfil.</p><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={renderGoogleLink} /><div ref={googleButton} aria-label="Vincular mi cuenta de Google" /></>}<button className="text-button" type="button" disabled={pending} onClick={signOut}>Cerrar sesión</button><p role="status">{message || (pending?'Procesando…':'')}</p></div>;
 
   return <div className="auth-entry">
     <div className="auth-primary">
