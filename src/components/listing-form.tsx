@@ -31,14 +31,16 @@ function PhotoSelector({ files, existingCount, uploadedCount, disabled, onChoose
   }, [files]);
   const total = existingCount + uploadedCount + files.length;
 
-  return <div className="wide listing-photo-picker">
-    <div className="listing-photo-heading"><strong>Fotografías</strong><span>{total} de {MAX_PHOTOS}</span></div>
-    <p>JPG, PNG o WebP. Hasta 4 MB cada una.{existingCount === 0 ? ' La primera será la portada.' : ' Las nuevas se agregarán después de las existentes.'}</p>
-    {total < MAX_PHOTOS && <label className="listing-photo-input">Elegir fotos
+  return <div className="listing-photo-picker" id="fotos-del-anuncio">
+    <div className="listing-photo-heading"><strong>Fotografías <span className="required-mark">*</span></strong><span>{total} / {MAX_PHOTOS}</span></div>
+    <p>Agrega de 1 a 3 fotos. JPG, PNG o WebP, hasta 4 MB cada una. {existingCount === 0 ? 'La primera será la portada.' : 'Las nuevas se agregarán después de las existentes.'}</p>
+    {total < MAX_PHOTOS && <label className="listing-photo-input">
       <input type="file" accept={PHOTO_TYPES.join(',')} multiple disabled={disabled} onChange={event => {
         onChoose(Array.from(event.target.files ?? []));
         event.target.value = '';
       }} />
+      <span className="listing-photo-add-icon" aria-hidden="true">＋</span>
+      <span><strong>{total ? 'Añadir otra foto' : 'Seleccionar fotografías'}</strong><small>Puedes elegir hasta {MAX_PHOTOS - total}</small></span>
     </label>}
     {files.length > 0 && <ul className="listing-photo-previews">{files.map((file, index) => <li key={`${file.name}-${file.lastModified}-${index}`}>
       {previews[index] && <img src={previews[index]} alt={`Vista previa ${index + 1}: ${file.name}`} />}
@@ -49,9 +51,9 @@ function PhotoSelector({ files, existingCount, uploadedCount, disabled, onChoose
   </div>;
 }
 
-export default function ListingForm({ id, initialDraft, initialPhotoCount = 0 }: { id?: string; initialDraft?: ListingDraft; initialPhotoCount?: number }) {
+export default function ListingForm({ id, initialDraft, initialPhotoCount = 0, defaultContactName = '' }: { id?: string; initialDraft?: ListingDraft; initialPhotoCount?: number; defaultContactName?: string }) {
   const router = useRouter();
-  const [draft, setDraft] = useState(initialDraft ?? initial);
+  const [draft, setDraft] = useState(initialDraft ?? { ...initial, contactName: defaultContactName });
   const [status, setStatus] = useState('');
   const [pending, startTransition] = useTransition();
   const [photos, setPhotos] = useState<File[]>([]);
@@ -90,6 +92,11 @@ export default function ListingForm({ id, initialDraft, initialPhotoCount = 0 }:
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (photos.length + uploadedCount + initialPhotoCount < 1) {
+      setStatus('Añade al menos una fotografía para enviar el anuncio a revisión.');
+      document.getElementById('fotos-del-anuncio')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     startTransition(async () => {
       let uploaded = 0;
       let uploadError = 'No pudimos subir una de las fotos. Intenta de nuevo.';
@@ -130,24 +137,34 @@ export default function ListingForm({ id, initialDraft, initialPhotoCount = 0 }:
     <p className="form-status" role="status">{status}</p>
   </form>;
 
-  return <form className="draft-form" onSubmit={submit}>
-    <div className="form-grid">
-      <label className="wide">Título del anuncio<input required minLength={8} maxLength={100} value={draft.title} onChange={e => change('title', e.target.value)} placeholder="Ej.: Moto de trabajo en buen estado" /></label>
-      <label>Categoría<select value={draft.category} onChange={e => change('category', e.target.value)}><option>Motos</option><option>Vehículos</option><option>Lotes</option><option>Terrenos y parcelas</option><option>Casas y departamentos</option><option>Maquinaria agrícola</option><option>Electrónicos</option><option>Otros</option></select></label>
-      <label>Operación<select value={draft.operation} onChange={e => change('operation', e.target.value)}><option>Venta</option>{canRent && <option>Alquiler</option>}{isHome && <option>Anticrético</option>}</select></label>
-      <div className="wide price-fields">
-        <label>{priceLabel}<input type="number" min="1" max="999999999" step="0.01" required value={draft.price} onChange={e => change('price', e.target.value)} placeholder="0" /></label>
-        <label>Moneda<select value={draft.currency} onChange={e => change('currency', e.target.value)}><option value="BOB">Bolivianos (Bs)</option><option value="USD">Dólares (US$)</option></select></label>
+  return <form className="draft-form listing-editor" onSubmit={submit}>
+    <section className="listing-form-section" aria-labelledby="listing-section-details">
+      <div className="listing-section-heading"><span>01</span><div><h2 id="listing-section-details">Tu anuncio</h2><p>Lo esencial para que encuentren tu oferta.</p></div></div>
+      <div className="form-grid">
+        <label className="wide">Título del anuncio<input required minLength={8} maxLength={100} value={draft.title} onChange={e => change('title', e.target.value)} placeholder="Ej.: Moto de trabajo en buen estado" /></label>
+        <label>Categoría<select value={draft.category} onChange={e => change('category', e.target.value)}><option>Motos</option><option>Vehículos</option><option>Lotes</option><option>Terrenos y parcelas</option><option>Casas y departamentos</option><option>Maquinaria agrícola</option><option>Electrónicos</option><option>Otros</option></select></label>
+        <label>Operación<select value={draft.operation} onChange={e => change('operation', e.target.value)}><option>Venta</option>{canRent && <option>Alquiler</option>}{isHome && <option>Anticrético</option>}</select></label>
+        <div className="wide price-fields">
+          <label>{priceLabel}<input type="number" min="1" max="999999999" step="0.01" required value={draft.price} onChange={e => change('price', e.target.value)} placeholder="0" /></label>
+          <label>Moneda<select value={draft.currency} onChange={e => change('currency', e.target.value)}><option value="BOB">Bolivianos (Bs)</option><option value="USD">Dólares (US$)</option></select></label>
+        </div>
+        <label className="wide">Barrio, zona o comunidad<input required minLength={2} maxLength={100} value={draft.zone} onChange={e => change('zone', e.target.value)} placeholder="Dentro de San Julián" /></label>
+        <label className="wide">Descripción<textarea required minLength={20} maxLength={3000} rows={3} value={draft.description} onChange={e => change('description', e.target.value)} placeholder="Describe su estado, características y condiciones." /></label>
       </div>
-      <label>Barrio, zona o comunidad<input required minLength={2} maxLength={100} value={draft.zone} onChange={e => change('zone', e.target.value)} placeholder="Dentro de San Julián" /></label>
-      <label className="wide">Descripción<textarea required minLength={20} maxLength={3000} rows={5} value={draft.description} onChange={e => change('description', e.target.value)} placeholder="Describe su estado, características y condiciones." /></label>
+    </section>
+    <section className="listing-form-section" aria-labelledby="listing-section-photos">
+      <div className="listing-section-heading"><span>02</span><div><h2 id="listing-section-photos">Muestra tu producto</h2><p>Las fotos ayudan a que las personas conozcan tu oferta.</p></div></div>
       {photoSelector}
       {hasPropertyMap && <PropertyMapPicker latitude={draft.latitude} longitude={draft.longitude} onChange={(latitude, longitude) => { setDraft(current => ({ ...current, latitude, longitude })); setStatus(''); }} />}
-      <label>Tu nombre o nombre comercial<input required minLength={2} maxLength={80} value={draft.contactName} onChange={e => change('contactName', e.target.value)} /></label>
-      <label>WhatsApp de Bolivia<input required inputMode="tel" minLength={8} value={draft.whatsapp} onChange={e => change('whatsapp', e.target.value)} placeholder="Ej.: 7XXXXXXX" /></label>
-    </div>
-    <p className="muted">{id ? 'Los cambios quedarán en revisión. Si el anuncio estaba publicado, dejará de verse hasta que lo aprobemos de nuevo.' : 'Tu número será visible en el anuncio aprobado para que te contacten. Las fotos elegidas se subirán al enviar el anuncio.'}</p>
-    <button className="button" type="submit" disabled={pending}>{pending ? 'Enviando…' : id ? 'Guardar y enviar a revisión' : 'Enviar para revisión'}</button>
-    <p className="form-status" role="status">{status}</p>
+    </section>
+    <section className="listing-form-section" aria-labelledby="listing-section-contact">
+      <div className="listing-section-heading"><span>03</span><div><h2 id="listing-section-contact">Datos de contacto</h2><p>Te escribirán directamente por WhatsApp.</p></div></div>
+      <div className="form-grid">
+        <label>Tu nombre o nombre comercial<input required minLength={2} maxLength={80} value={draft.contactName} onChange={e => change('contactName', e.target.value)} /></label>
+        <label>WhatsApp de Bolivia<input required inputMode="tel" minLength={8} value={draft.whatsapp} onChange={e => change('whatsapp', e.target.value)} placeholder="Ej.: 7XXXXXXX" /></label>
+      </div>
+    </section>
+    <div className="listing-submit"><p>{id ? 'Los cambios volverán a revisión antes de mostrarse.' : 'Revisaremos tu anuncio antes de mostrarlo. Podrás seguir su estado en «Mis anuncios».'}</p><button className="button" type="submit" disabled={pending}>{pending ? 'Enviando…' : id ? 'Guardar y enviar' : 'Enviar para revisión'}</button></div>
+    <p className="form-status" role="status" aria-live="polite">{status}</p>
   </form>;
 }

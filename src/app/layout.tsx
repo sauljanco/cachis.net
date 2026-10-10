@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   // Private routes inherit noindex; public pages explicitly opt in.
   robots: { index: false, follow: false },
 };
-export const viewport: Viewport = { themeColor: '#103f35' };
+export const viewport: Viewport = { themeColor: '#103f35', viewportFit: 'cover' };
 
 function Brand() {
   return <Link href="/" className="brand" aria-label="cachis.net — volver al inicio"><Image src="/brand-logo.png" alt="cachis.net" width={220} height={55} priority /></Link>;

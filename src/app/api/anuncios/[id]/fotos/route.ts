@@ -32,7 +32,7 @@ export async function POST(request:NextRequest,{params}:Context){
     const input=Buffer.from(await file.arrayBuffer());
     const meta=await sharp(input,{limitInputPixels:20_000_000}).metadata();
     if(!meta.width||!meta.height||!['jpeg','png','webp'].includes(meta.format||''))throw new Error('Formato inválido');
-    image=await sharp(input,{limitInputPixels:20_000_000}).rotate().resize({width:1600,height:1600,fit:'inside',withoutEnlargement:true}).webp({quality:78}).toBuffer();
+    image=await sharp(input,{limitInputPixels:20_000_000}).rotate().resize({width:1440,height:1440,fit:'inside',withoutEnlargement:true}).webp({quality:72,effort:5}).toBuffer();
   }catch{return NextResponse.json({error:'No pudimos procesar esa foto.'},{status:400});}
   const existing=await sql`SELECT position FROM cachis.listing_photos WHERE listing_id=${id} ORDER BY position`;
   if(existing.length>=3)return NextResponse.json({error:'Máximo 3 fotos por anuncio.'},{status:409});

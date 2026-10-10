@@ -24,21 +24,21 @@ export async function recordSiteView(visitorId: string): Promise<number> {
 }
 
 export async function recordListingView(visitorId: string, listingId: string): Promise<number | null> {
-  const sql = database();
-  const published = await sql`SELECT 1 FROM cachis.listings WHERE id = ${listingId}::uuid AND status = 'published'`;
-  if (!published.length) return null;
-  const rows = await sql`
-    WITH recorded AS (
+  const rows = await database()`
+    WITH published AS (
+      SELECT id FROM cachis.listings WHERE id = ${listingId}::uuid AND status = 'published'
+    ), recorded AS (
       INSERT INTO cachis.view_events (visitor_id, listing_id, viewed_on)
-      VALUES (${visitorId}::uuid, ${listingId}::uuid, current_date)
-      ON CONFLICT DO NOTHING RETURNING 1
+      SELECT ${visitorId}::uuid, id, current_date FROM published
+      ON CONFLICT DO NOTHING RETURNING listing_id
     ), bumped AS (
       INSERT INTO cachis.listing_view_counts (listing_id, views)
-      SELECT ${listingId}::uuid, 1 FROM recorded
+      SELECT listing_id, 1 FROM recorded
       ON CONFLICT (listing_id) DO UPDATE SET views = cachis.listing_view_counts.views + 1
       RETURNING views
     )
     SELECT COALESCE((SELECT views FROM bumped),
-      (SELECT views FROM cachis.listing_view_counts WHERE listing_id = ${listingId}::uuid), 0) AS views`;
-  return Number(rows[0]?.views ?? 0);
+      (SELECT views FROM cachis.listing_view_counts WHERE listing_id = ${listingId}::uuid), 0) AS views
+    WHERE EXISTS (SELECT 1 FROM published)`;
+  return rows.length ? Number(rows[0].views) : null;
 }

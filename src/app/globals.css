@@ -301,3 +301,101 @@ footer{max-width:1232px;margin:auto;padding:30px 0 34px;border-color:#e0e9df}foo
 .listing-photo-full{display:inline-block;margin-top:7px;color:var(--muted);font-size:12px}
 .photo-retry-form{display:grid;gap:12px}.photo-retry-form .notice{margin:0}.photo-retry-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.photo-retry-actions a{color:var(--green);font-weight:700;text-decoration:underline}
 @media(max-width:650px){.listing-photo-picker{padding:12px}.listing-photo-previews{gap:6px}.listing-photo-previews img{height:72px}.photo-retry-actions .button{width:100%}}
+
+/* Editor de anuncios: compacto y claro en móvil. */
+.publish-page:has(.listing-editor){max-width:900px;padding-top:18px}
+.publish-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 0 16px}
+.publish-intro .eyebrow{margin:0 0 5px;font-size:11px;letter-spacing:.13em}
+.publish-intro h1{font-size:clamp(29px,4vw,42px);line-height:1.1;margin:0 0 6px}
+.publish-intro .lead{font-size:14px;margin:0;color:var(--muted)}
+.publish-exit{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:750;color:var(--green);padding:6px 0;white-space:nowrap}
+.publish-exit span{font-size:22px;line-height:16px}
+.listing-editor{display:grid;gap:12px}
+.listing-form-section{background:#fff;border:1px solid #dfe9e1;border-radius:17px;padding:19px 22px;box-shadow:0 6px 24px #123d2b08}
+.listing-section-heading{display:flex;align-items:center;gap:13px;margin-bottom:15px}
+.listing-section-heading>span{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:10px;background:#e8f3e0;color:var(--green);font-size:12px;font-weight:800}
+.listing-section-heading h2{font-size:19px;letter-spacing:-.025em;margin:0 0 2px}
+.listing-section-heading p{font-size:12px;color:var(--muted);margin:0}
+.listing-editor .form-grid{gap:13px 15px}
+.listing-editor .form-grid label{gap:5px;font-size:12px;font-weight:750;color:#294439}
+.listing-editor .form-grid input,.listing-editor .form-grid select,.listing-editor .form-grid textarea{min-height:43px;padding:9px 12px;border-color:#cddcd1;border-radius:9px;font-size:14px;background:#fff;box-shadow:0 1px 2px #123d2b06}
+.listing-editor .form-grid textarea{min-height:84px}
+.listing-editor .price-fields{gap:15px}
+.listing-editor .listing-photo-picker{background:#f7faf5;border:1px solid #d8e6d7;padding:14px;border-radius:12px}
+.listing-editor .listing-photo-heading strong{font-size:14px}
+.listing-editor .listing-photo-heading>span{padding:3px 9px}
+.listing-editor .listing-photo-picker>p{margin:5px 0 10px;line-height:1.35}
+.required-mark{color:#ae6226}
+.listing-editor .listing-photo-input{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border:1px dashed #9fbaa4;border-radius:10px;background:#fff;cursor:pointer;min-height:66px}
+.listing-editor .listing-photo-input:hover{border-color:var(--green);background:#fbfdfa}
+.listing-editor .listing-photo-input:focus-within{outline:3px solid #b38b22;outline-offset:2px}
+.listing-editor .listing-photo-input input{position:absolute;width:1px;height:1px;min-height:0!important;opacity:0;overflow:hidden;padding:0!important}
+.listing-photo-add-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:9px;background:#e7f2dd;color:var(--green);font-size:24px;font-weight:400;flex:none;line-height:1}
+.listing-editor .listing-photo-input span:last-child{display:flex;flex-direction:column;gap:2px}
+.listing-editor .listing-photo-input strong{font-size:13px;color:var(--green)}
+.listing-editor .listing-photo-input small{font-size:11px;font-weight:400;color:var(--muted)}
+.listing-editor .listing-photo-previews{margin-top:10px}
+.listing-editor .listing-photo-previews li{position:relative;padding:0;overflow:hidden}
+.listing-editor .listing-photo-previews img{height:112px;border-radius:0}
+.listing-editor .listing-photo-previews span{padding:0 6px}
+.listing-editor .listing-photo-previews button{padding:3px 6px 6px}
+.listing-editor .property-map-picker{margin-top:12px}
+.listing-submit{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #dfe9e1;border-radius:14px;background:#f7faf5;padding:12px 16px}
+.listing-submit p{font-size:12px;color:var(--muted);margin:0;max-width:48ch}
+.listing-submit .button{min-height:42px;padding:9px 15px;font-size:13px;white-space:nowrap}
+.listing-editor>.form-status{margin:0;font-size:13px;font-weight:650}
+@media(max-width:650px){
+  .publish-page:has(.listing-editor){padding-top:12px;padding-bottom:25px}
+  .publish-intro{margin-bottom:12px}
+  .publish-intro h1{font-size:29px}
+  .publish-intro .lead{font-size:12px;line-height:1.35}
+  .publish-exit{font-size:12px}
+  .listing-editor{gap:9px}
+  .listing-form-section{padding:13px;border-radius:13px}
+  .listing-section-heading{gap:9px;margin-bottom:11px}
+  .listing-section-heading>span{width:28px;height:28px;border-radius:8px;font-size:11px}
+  .listing-section-heading h2{font-size:17px}
+  .listing-section-heading p{font-size:11px}
+  .listing-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .listing-editor .form-grid .wide,.listing-editor .price-fields{grid-column:1/-1}
+  .listing-editor .form-grid label{font-size:12px}
+  .listing-editor .form-grid input,.listing-editor .form-grid select,.listing-editor .form-grid textarea{font-size:14px;min-height:42px;padding:8px 10px}
+  .listing-editor .price-fields{gap:9px}
+  .listing-editor .price-fields select{font-size:12px}
+  .listing-editor .listing-photo-picker{padding:11px}
+  .listing-editor .listing-photo-previews img{height:76px}
+  .listing-submit{align-items:stretch;flex-direction:column;padding:12px}
+  .listing-submit .button{width:100%}
+}
+
+.admin-active-section{margin:35px 0;padding-top:24px;border-top:1px solid var(--border)}
+.admin-section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.admin-section-title .eyebrow{margin-bottom:5px}
+.admin-section-title h2{margin:0}
+.admin-section-title>span{color:var(--muted);font-size:12px;white-space:nowrap}
+.admin-active-list{display:grid;gap:12px}
+.admin-active-card{border:1px solid #dce8dd;border-radius:14px;padding:15px;background:#fff;box-shadow:0 4px 16px #123d2b08}
+.admin-active-main{display:flex;gap:12px;align-items:center;min-width:0}
+.admin-active-main h3{font-size:17px;line-height:1.2;margin:5px 0}
+.admin-active-main p,.admin-active-main small{font-size:12px;color:var(--muted);margin:0}
+.admin-active-photo{position:relative;width:88px;height:76px;flex:none;border-radius:9px;overflow:hidden;background:#e8eee8}
+.admin-active-photo img{object-fit:cover}
+.admin-status{display:inline-flex;padding:2px 8px;border-radius:20px;background:#e6f3df;font-size:10px;font-weight:800;color:var(--green)}
+.admin-status-paused{background:#fff0d9;color:#7c4c1f}
+.admin-listing-controls{margin-top:13px;padding-top:11px;border-top:1px solid var(--border)}
+.admin-contact-edit label{display:block;font-size:11px;font-weight:750;margin-bottom:5px}
+.admin-contact-edit>div{display:flex;gap:7px}
+.admin-contact-edit input{min-width:0;flex:1;max-width:220px;border:1px solid #cbdacf;border-radius:8px;padding:7px 9px;font-size:13px}
+.admin-listing-controls button{border:1px solid #cbdacf;border-radius:8px;background:#f7faf6;padding:7px 10px;font-size:12px;font-weight:750;min-height:36px}
+.admin-listing-controls button:disabled{opacity:.5;cursor:default}
+.admin-listing-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.admin-listing-actions .admin-delete-button{color:#9c342c;border-color:#edd6d1;background:#fffafa}
+.admin-listing-controls>p{margin:6px 0 0;font-size:12px;color:var(--green)}
+@media(max-width:650px){.admin-section-title h2{font-size:21px}.admin-active-card{padding:12px}.admin-active-photo{width:67px;height:67px}}
+
+.photo-retry-form .listing-photo-input{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border:1px dashed #9fbaa4;border-radius:10px;background:#fff;cursor:pointer}
+.photo-retry-form .listing-photo-input input{position:absolute;width:1px;height:1px;min-height:0!important;opacity:0;overflow:hidden;padding:0!important}
+.photo-retry-form .listing-photo-input span:last-child{display:flex;flex-direction:column}
+.photo-retry-form .listing-photo-input:focus-within{outline:3px solid #b38b22;outline-offset:2px}
+
+@media(max-width:650px){.header{padding-top:calc(8px + env(safe-area-inset-top, 0px))}}

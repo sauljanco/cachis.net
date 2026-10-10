@@ -1,8 +1,8 @@
 'use server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { currentUser, isAdmin } from '@/lib/auth/server';
 import { database } from '@/lib/db';
-import { listingSchema } from '@/lib/validation';
+import { listingSchema, whatsappSchema } from '@/lib/validation';
 import { z } from 'zod';
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -42,15 +42,17 @@ export async function updateListing(id: string, input: unknown) {
     WHERE id=${id} AND owner_id=${user.id} AND status IN ('pending','published','paused','rejected')
     RETURNING id`;
   if (!rows.length) return { error: 'Este anuncio no se puede editar o ya no está disponible.' };
+  revalidateTag('public-catalog', { expire: 0 });
   revalidatePath('/'); revalidatePath('/mis-anuncios'); revalidatePath('/administrar'); revalidatePath('/anuncios/'+id);
   return { success: true };
 }
 
 export async function changeListingStatus(id: string, status: string) {
   const user = await currentUser();
-  if (!user || !['paused','closed','pending'].includes(status) || !/^[0-9a-f-]{36}$/i.test(id)) return { error:'Acción no permitida.' };
-  const rows = await database()`UPDATE cachis.listings SET status=${status},updated_at=now() WHERE id=${id} AND owner_id=${user.id} RETURNING id`;
+  if (!user || !['paused','closed','pending'].includes(status) || !uuidPattern.test(id)) return { error:'Acción no permitida.' };
+  const rows = await database()`UPDATE cachis.listings SET status=${status},updated_at=now() WHERE id=${id} AND owner_id=${user.id} AND status IN ('pending','published','paused','rejected') RETURNING id`;
   if (!rows.length) return { error:'No encontramos un anuncio tuyo con ese identificador.' };
+  revalidateTag('public-catalog', { expire: 0 });
   revalidatePath('/'); revalidatePath('/mis-anuncios'); revalidatePath('/anuncios/'+id);
   return { success:true };
 }
@@ -59,10 +61,58 @@ export async function moderate(id: string, decision: string) {
   const user = await currentUser();
   if (!user || !isAdmin(user.id) || !['published','rejected'].includes(decision) || !/^[0-9a-f-]{36}$/i.test(id)) return { error:'Acción no permitida.' };
   const sql=database();
-  await sql`WITH changed AS (UPDATE cachis.listings SET status=${decision},updated_at=now() WHERE id=${id} AND status='pending' RETURNING id)
-    INSERT INTO cachis.moderation_log(listing_id,moderator_id,decision) SELECT id,${user.id},${decision} FROM changed`;
+  const rows = await sql`WITH changed AS (
+    UPDATE cachis.listings SET status=${decision},updated_at=now()
+    WHERE id=${id} AND status='pending'
+      AND (${decision}='rejected' OR EXISTS (SELECT 1 FROM cachis.listing_photos p WHERE p.listing_id=${id}))
+    RETURNING id
+  )
+  INSERT INTO cachis.moderation_log(listing_id,moderator_id,decision)
+  SELECT id,${user.id},${decision} FROM changed RETURNING listing_id`;
+  if (!rows.length) return { error: decision === 'published' ? 'Este anuncio necesita al menos una foto antes de aprobarse.' : 'El anuncio ya no está pendiente.' };
+  revalidateTag('public-catalog', { expire: 0 });
   revalidatePath('/'); revalidatePath('/administrar'); revalidatePath('/anuncios/'+id);
   return { success:true };
+}
+
+export async function adminUpdateWhatsapp(id: string, input: unknown) {
+  const user = await currentUser();
+  if (!user || !isAdmin(user.id) || !uuidPattern.test(id)) return { error: 'Acción no permitida.' };
+  const parsed = whatsappSchema.safeParse(input);
+  if (!parsed.success) return { error: 'Introduce un WhatsApp válido de Bolivia, con 8 dígitos.' };
+  const rows = await database()`WITH changed AS (
+    UPDATE cachis.listings SET whatsapp=${parsed.data},updated_at=now()
+    WHERE id=${id} AND status IN ('pending','published','paused') AND whatsapp<>${parsed.data}
+    RETURNING id
+  )
+  INSERT INTO cachis.listing_admin_events(listing_id,admin_id,action)
+  SELECT id,${user.id},'whatsapp_updated' FROM changed RETURNING listing_id`;
+  if (!rows.length) return { error: 'El número ya es el mismo o el anuncio no está disponible.' };
+  revalidatePath('/administrar'); revalidatePath('/anuncios/'+id);
+  return { success: true };
+}
+
+export async function adminManageListing(id: string, action: 'pause' | 'resume' | 'delete') {
+  const user = await currentUser();
+  if (!user || !isAdmin(user.id) || !uuidPattern.test(id) || !['pause','resume','delete'].includes(action)) return { error: 'Acción no permitida.' };
+  const nextStatus = action === 'pause' ? 'paused' : action === 'resume' ? 'published' : 'deleted';
+  const fromStatus = action === 'pause' ? 'published' : action === 'resume' ? 'paused' : null;
+  const rows = await database()`WITH changed AS (
+    UPDATE cachis.listings SET status=${nextStatus},updated_at=now()
+    WHERE id=${id} AND (${fromStatus}::text IS NULL AND status IN ('published','paused') OR status=${fromStatus})
+      AND (${action}<>'resume' OR EXISTS (SELECT 1 FROM cachis.listing_photos p WHERE p.listing_id=${id}))
+    RETURNING id
+  ), resolved AS (
+    UPDATE cachis.reports SET resolved_at=now(),resolved_by=${user.id},resolution='removed'
+    WHERE ${action}='delete' AND listing_id IN (SELECT id FROM changed) AND resolved_at IS NULL
+    RETURNING id
+  )
+  INSERT INTO cachis.listing_admin_events(listing_id,admin_id,action)
+  SELECT id,${user.id},${action} FROM changed RETURNING listing_id`;
+  if (!rows.length) return { error: 'No se pudo cambiar el anuncio. Comprueba su estado y que tenga fotos.' };
+  revalidateTag('public-catalog', { expire: 0 });
+  revalidatePath('/'); revalidatePath('/administrar'); revalidatePath('/mis-anuncios'); revalidatePath('/anuncios/'+id);
+  return { success: true };
 }
 
 export async function reportListing(id: string, reason: unknown) {
@@ -106,6 +156,7 @@ export async function resolveReport(id: string, decision: 'dismissed' | 'paused'
       WHERE listing_id IN (SELECT id FROM changed) AND resolved_at IS NULL RETURNING listing_id`;
   if (!rows.length) return { error: 'El reporte ya se revisó o el anuncio no está publicado.' };
   const listingId = String(rows[0].listing_id);
+  if (decision === 'paused') revalidateTag('public-catalog', { expire: 0 });
   revalidatePath('/administrar'); revalidatePath('/'); revalidatePath('/anuncios/'+listingId);
   return { success: true };
 }
