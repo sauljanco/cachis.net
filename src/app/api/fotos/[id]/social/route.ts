@@ -33,7 +33,8 @@ export async function GET(_request:Request,{params}:Context) {
     }
     return new NextResponse(new Uint8Array(image),{headers:{
       'Content-Type':'image/jpeg',
-      'Cache-Control':'no-store',
+      // Uploads receive new photo IDs, so shared previews can be cached.
+      'Cache-Control':'public, max-age=0, s-maxage=600',
       'X-Content-Type-Options':'nosniff',
     }});
   } catch {

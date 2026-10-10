@@ -26,7 +26,8 @@ export async function GET(request:NextRequest,{params}:Context){
   const etag=published ? `"${id}-${width ?? 'original'}"` : null;
   const headers={
     'Content-Type':'image/webp',
-    'Cache-Control':published ? 'private, no-cache' : 'private, no-store',
+    // Cache only published photos at the CDN; private photos stay uncached.
+    'Cache-Control':published ? 'public, max-age=0, s-maxage=600' : 'private, no-store',
     'X-Content-Type-Options':'nosniff',
     ...(etag ? {'ETag':etag} : {}),
   };
