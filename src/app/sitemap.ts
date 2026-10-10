@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { database } from '@/lib/db';
 
-// A 15-minute cache keeps the index current without querying Neon for every crawler.
-export const revalidate = 900;
+// Keep newly approved listings discoverable on the next crawler request.
+// Sitemap traffic is small; querying Neon here avoids stale edge copies.
+export const dynamic = 'force-dynamic';
 const origin = 'https://cachis.net';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
