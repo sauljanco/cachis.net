@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const metadata = { title: 'Política de privacidad' };
+export const metadata = { alternates: { canonical: 'https://cachis.net/privacidad' }, robots: { index: true, follow: true }, title: 'Política de privacidad' };
 
 export default function PrivacyPage() {
   return <main id="contenido" className="container policy-page">

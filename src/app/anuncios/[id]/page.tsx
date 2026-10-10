@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { money } from '@/lib/listings';
 import { findListing } from '@/lib/repository';
+import { listingJsonLd } from '@/lib/seo';
 import { currentUser } from '@/lib/auth/server';
 import ReportForm from '@/components/report-form';
 import ListingGallery from '@/components/listing-gallery';
@@ -14,7 +15,7 @@ type Props = {params:Promise<{id:string}>};
 export async function generateMetadata({params}:Props):Promise<Metadata> {
   const {id}=await params;
   const listing=await findListing(id);
-  if (!listing) return {title:'Anuncio no encontrado'};
+  if (!listing) notFound();
 
   const url=`https://cachis.net/anuncios/${listing.id}`;
   const price=money(listing.price,listing.currency);
@@ -28,6 +29,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata> {
     title:listing.title,
     description,
     alternates:{canonical:url},
+    robots:{index:true,follow:true},
     openGraph:{type:'website',locale:'es_BO',siteName:'cachis.net',url,title:listing.title,description,images:[image]},
     twitter:{card:'summary_large_image',title:listing.title,description,images:[image.url]},
   };
@@ -40,6 +42,7 @@ export default async function Detail({params}:Props) {
   const message=encodeURIComponent(`Hola, vi tu anuncio "${listing.title}" en cachis.net. ¿Sigue disponible?`);
   const whatsapp=`https://wa.me/${listing.whatsapp}?text=${message}`;
   return <main id="contenido" className="container detail">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(listingJsonLd(listing)).replace(/</g,'\\u003c')}} />
     <nav className="detail-breadcrumb" aria-label="Ruta de navegación"><Link href="/" className="back"><span aria-hidden="true">←</span> Explorar anuncios</Link><span aria-hidden="true" className="breadcrumb-separator">/</span><span>{listing.category}</span></nav>
     <div className="detail-grid">
       <aside className="detail-panel">

@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/icon';
 
-export default function ViewCounter({ kind, id, initialCount, className = '' }: {
+export default function ViewCounter({ kind, id, initialCount, className = '', hidden = false }: {
   kind: 'site' | 'listing';
   id?: string;
   initialCount: number;
   className?: string;
+  hidden?: boolean;
 }) {
   const [count, setCount] = useState(initialCount);
 
@@ -30,6 +31,7 @@ export default function ViewCounter({ kind, id, initialCount, className = '' }: 
     return () => { active = false; };
   }, [kind, id, initialCount]);
 
+  if (hidden) return null;
   return <span className={`view-counter ${className}`} title="Se cuenta una visita por navegador al día">
     <Icon name="eye" /> <span>{new Intl.NumberFormat('es-BO').format(count)} {count === 1 ? 'visualización' : 'visualizaciones'}{kind === 'site' && ' del sitio'}</span>
   </span>;

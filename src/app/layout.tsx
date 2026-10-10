@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://cachis.net'),
   title: { default: 'cachis.net | Compra y vende en San Julián', template: '%s | cachis.net' },
   description: 'Motos, vehículos, inmuebles, electrónicos y más en San Julián, Santa Cruz. Precios en bolivianos y dólares.',
+  // Private routes inherit noindex; public pages explicitly opt in.
   robots: { index: false, follow: false },
 };
 export const viewport: Viewport = { themeColor: '#103f35' };

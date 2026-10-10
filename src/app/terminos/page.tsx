@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const metadata = { title: 'Condiciones de uso' };
+export const metadata = { alternates: { canonical: 'https://cachis.net/terminos' }, robots: { index: true, follow: true }, title: 'Condiciones de uso' };
 
 export default function TermsPage() {
   return <main id="contenido" className="container policy-page">
