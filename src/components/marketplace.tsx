@@ -63,8 +63,8 @@ export default function Marketplace({ listings, siteViews }: { listings: Listing
   return <main id="contenido" className="container marketplace">
     <section aria-label="Buscar anuncios" className="search-area">
       <div className="search-row">
-        <label className="search-input"><Icon name="search" /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca una moto, un lote, una casa..." aria-label="Buscar anuncios" /></label>
-        <a href="#resultados" className="button search-submit" aria-label="Ver resultados de búsqueda"><Icon name="arrow" /></a>
+        <label className="search-input"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca una moto, un lote, una casa..." aria-label="Buscar anuncios" /></label>
+        <a href="#resultados" className="button search-submit" aria-label="Buscar anuncios"><Icon name="search" /></a>
       </div>
       <div className="category-heading"><span>Explora por categoría</span><span>Encuentra lo que necesitas, cerca de casa.</span></div>
       <div className="categories" aria-label="Categorías">{categories.map(c => <button key={c.name} type="button" aria-label={c.name} aria-pressed={category === c.name} className={category === c.name ? 'category active' : 'category'} onClick={() => setCategory(c.name)}><span className="category-icon"><CategoryIcon name={c.icon} /></span><span>{'label' in c ? c.label : c.name}</span></button>)}</div>

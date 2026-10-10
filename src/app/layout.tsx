@@ -35,7 +35,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     </header>
     {children}
     <footer className="site-footer">
-      <div className="footer-inner"><p className="footer-origin">Hecho en San Julián<span aria-hidden="true"> ↗</span></p><small>© {new Date().getFullYear()} cachis.net. Todos los derechos reservados.</small><nav className="footer-legal" aria-label="Información legal"><Link href="/privacidad">Privacidad</Link><Link href="/terminos">Condiciones de uso</Link></nav></div>
+      <div className="footer-inner"><p className="footer-origin">Hecho en San Julián</p><small>© {new Date().getFullYear()} cachis.net. Todos los derechos reservados.</small><nav className="footer-legal" aria-label="Información legal"><Link href="/privacidad">Privacidad</Link><Link href="/terminos">Condiciones de uso</Link></nav></div>
     </footer>
   </body></html>;
 }

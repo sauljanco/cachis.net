@@ -448,3 +448,122 @@
   .marketplace .site-views { font-size:10px; }
   .marketplace .site-views svg { width:13px; height:13px; }
 }
+
+/* Compact branded navigation and catalog controls */
+.header {
+  min-height: 72px;
+  padding-block: 8px;
+  border-bottom: 1px solid #0a3b30;
+  background: #103f35;
+  color: #fff;
+}
+.header .brand { position: relative; display: block; line-height: 0; flex: none; }
+.header .brand img { filter: brightness(0) invert(1); }
+.header .brand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/brand-logo.png') center / 100% 100% no-repeat;
+  clip-path: inset(0 0 35% 82%);
+  pointer-events: none;
+}
+.header .location,
+.header .location svg,
+.header nav > a:not(.button),
+.header .nav-user,
+.header .nav-user .nav-user-label { color: #fff; }
+.header nav > a:not(.button):hover,
+.header .nav-user:hover { color: #d9f5a9; }
+.header .nav-user { border-color: #ffffff38; background: #ffffff14; }
+.header .nav-user .nav-avatar { background: #d6f57a; color: #103f35; }
+.header .button.small {
+  min-height: 39px;
+  padding: 8px 14px;
+  gap: 7px;
+  background: #d6f57a;
+  border-color: #d6f57a;
+  color: #103f35;
+  box-shadow: 0 3px 11px #071e1a24;
+}
+.header .button.small:hover { background: #ecffb5; border-color: #ecffb5; }
+
+.marketplace .search-area {
+  margin: 12px 0 15px;
+  padding: 10px 14px 12px;
+  border-radius: 15px;
+}
+.marketplace .search-row { min-height: 38px; border-radius: 9px; }
+.marketplace .search-input { padding: 0 13px; }
+.marketplace .search-input input { min-height: 36px; font-size: 14px; }
+.marketplace .search-submit {
+  flex: 0 0 36px;
+  width: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  margin: 2px;
+  padding: 0;
+  border-radius: 7px;
+}
+.marketplace .search-submit svg { width: 18px; height: 18px; }
+.marketplace .category-heading { margin: 9px 2px 6px; line-height: 1.2; }
+.marketplace .category-heading span:first-child { font-size: 13px; }
+.marketplace .categories { gap: 6px; padding-bottom: 2px; }
+.marketplace .category { flex: 1 0 auto; min-height: 48px; padding: 5px 6px; }
+.marketplace .category > span:last-child { font-size: 13px; line-height: 1.15; white-space: nowrap; }
+.marketplace .category-icon { width: 34px; height: 34px; }
+.category-art-field,
+.category-art-tractor {
+  background-size: cover;
+  background-position: center;
+}
+.category-art-field { background-image: url('/category-field.webp'); }
+.category-art-tractor { background-image: url('/category-tractor.webp'); }
+.marketplace .results { padding-top: 0; }
+.marketplace .results-header .catalog-title { font-size: clamp(25px, 2.4vw, 33px); }
+.marketplace .filters { gap: 10px; padding: 9px 0 12px; }
+.marketplace .filters label { gap: 2px; font-size: 12px; }
+.marketplace .filters select,
+.marketplace .filters input {
+  width: 150px;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+.marketplace .filters .text-button { min-height: 36px; padding: 6px 0; font-size: 12px; }
+.marketplace .count { padding: 5px 9px; font-size: 12px; }
+.marketplace .sort select { padding: 4px 0; font-size: 13px; }
+
+@media (max-width: 1100px) {
+  .header { padding-inline: 24px; }
+}
+@media (max-width: 650px) {
+  .header { min-height: 53px; padding: 6px 10px; }
+  .header .brand img { width: clamp(96px, 27vw, 118px); }
+  .header .button.small { min-height: 34px; padding: 6px 8px; }
+  .header .nav-user { padding: 3px 5px; }
+  .marketplace .search-area { margin: 7px 0 13px; padding: 7px 8px 9px; }
+  .marketplace .search-row { min-height: 38px; }
+  .marketplace .search-input { padding: 0 9px; }
+  .marketplace .search-input input { min-height: 36px; font-size: 12px; }
+  .marketplace .search-submit {
+    flex-basis: 34px;
+    width: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    margin: 2px;
+  }
+  .marketplace .category-heading { margin: 7px 1px 5px; }
+  .marketplace .categories { gap: 6px; }
+  .marketplace .category { min-height: 39px; padding: 4px 7px; }
+  .marketplace .category > span:last-child { font-size: 11px; }
+  .marketplace .category-icon { width: 27px; height: 27px; }
+  .marketplace .filters { gap: 6px 8px; padding: 8px 0 10px; }
+  .marketplace .filters input,
+  .marketplace .filters select {
+    width: 100%;
+    min-height: 37px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
