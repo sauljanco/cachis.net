@@ -22,7 +22,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata> {
   const summary=listing.description.replace(/\s+/g,' ').trim().slice(0,150);
   const description=`${price} · ${listing.category} en ${listing.operation.toLowerCase()} · ${listing.zone}, San Julián, Santa Cruz.${summary ? ` ${summary}` : ''}`;
   const image=listing.photos[0]
-    ? {url:`https://cachis.net${listing.photos[0]}/social?v=2`,width:1200,height:630,alt:`Fotografía de ${listing.title}`,type:'image/jpeg'}
+    ? {url:`https://cachis.net${listing.photos[0]}/social?v=3`,width:1200,height:630,alt:`Fotografía de ${listing.title} con la marca cachis.net`,type:'image/jpeg'}
     : {url:'https://cachis.net/brand-logo.png',alt:'cachis.net'};
 
   return {

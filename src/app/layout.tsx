@@ -28,6 +28,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       <Brand />
       <span className="location"><Icon name="pin" /> San Julián, Santa Cruz</span>
       <nav aria-label="Navegación principal">
+        <Link href="/" className="nav-home"><Icon name="home" /><span>Inicio</span></Link>
         <Link href="/?favoritos=1" className="nav-favorites" aria-label="Guardados"><Icon name="heart" /><span>Guardados</span></Link>
         <Link href="/mis-anuncios" className="nav-account">Mis anuncios</Link>
         <AccountNav />

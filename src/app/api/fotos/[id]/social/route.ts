@@ -1,12 +1,15 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { NextResponse } from 'next/server';
-import sharp from 'sharp';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { database } from '@/lib/db';
 import { bucket, storage } from '@/lib/storage';
+import { brandedSocialImage } from '@/lib/social-image';
 
 export const runtime = 'nodejs';
 type Context = {params:Promise<{id:string}>};
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const logo = readFile(join(process.cwd(), 'public', 'brand-logo.png'));
 
 export async function GET(_request:Request,{params}:Context) {
   const {id}=await params;
@@ -21,16 +24,7 @@ export async function GET(_request:Request,{params}:Context) {
     const response=await storage().send(new GetObjectCommand({Bucket:bucket,Key:String(rows[0].object_key)}));
     if (!response.Body) return new NextResponse(null,{status:404});
     const source=Buffer.from(await response.Body.transformToByteArray());
-    const {width,height}=await sharp(source).metadata();
-    let image:Buffer;
-    if (width && height && width / height < 1.2) {
-      // Keep portrait products fully visible while using their own photo to fill the sides.
-      const background=await sharp(source).resize(1200,630,{fit:'cover'}).blur(28).modulate({brightness:.7}).toBuffer();
-      const foreground=await sharp(source).resize(1200,630,{fit:'inside'}).toBuffer();
-      image=await sharp(background).composite([{input:foreground,gravity:'centre'}]).jpeg({quality:84}).toBuffer();
-    } else {
-      image=await sharp(source).resize(1200,630,{fit:'cover',position:'centre'}).jpeg({quality:84}).toBuffer();
-    }
+    const image=await brandedSocialImage(source, await logo);
     return new NextResponse(new Uint8Array(image),{headers:{
       'Content-Type':'image/jpeg',
       // Uploads receive new photo IDs, so shared previews can be cached.

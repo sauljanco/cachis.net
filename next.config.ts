@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: { '/api/fotos/*/social': ['./public/brand-logo.png'] },
   async headers() {
     return [{
       source: '/sw.js',
