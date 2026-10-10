@@ -77,14 +77,15 @@ export default function ListingForm({ id, initialDraft, initialPhotoCount = 0 }:
     setDraft(current => ({
       ...current,
       [key]: value,
-      ...(key === 'category' && value !== 'Casas y departamentos' ? { operation: 'Venta' } : {}),
-      ...(key === 'category' && value !== 'Lotes' && value !== 'Casas y departamentos' ? { latitude: '', longitude: '' } : {}),
+      ...(key === 'category' && !['Casas y departamentos','Terrenos y parcelas','Maquinaria agrícola'].includes(value) ? { operation: 'Venta' } : key === 'category' && value !== 'Casas y departamentos' && current.operation === 'Anticrético' ? { operation: 'Venta' } : {}),
+      ...(key === 'category' && !['Lotes','Terrenos y parcelas','Casas y departamentos'].includes(value) ? { latitude: '', longitude: '' } : {}),
     }));
     setStatus('');
   }
 
   const isHome = draft.category === 'Casas y departamentos';
-  const hasPropertyMap = draft.category === 'Lotes' || isHome;
+  const hasPropertyMap = ['Lotes','Terrenos y parcelas','Casas y departamentos'].includes(draft.category);
+  const canRent = isHome || draft.category === 'Terrenos y parcelas' || draft.category === 'Maquinaria agrícola';
   const priceLabel = draft.operation === 'Alquiler' ? 'Mensualidad' : draft.operation === 'Anticrético' ? 'Monto del anticrético' : 'Precio';
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -132,8 +133,8 @@ export default function ListingForm({ id, initialDraft, initialPhotoCount = 0 }:
   return <form className="draft-form" onSubmit={submit}>
     <div className="form-grid">
       <label className="wide">Título del anuncio<input required minLength={8} maxLength={100} value={draft.title} onChange={e => change('title', e.target.value)} placeholder="Ej.: Moto de trabajo en buen estado" /></label>
-      <label>Categoría<select value={draft.category} onChange={e => change('category', e.target.value)}><option>Motos</option><option>Vehículos</option><option>Lotes</option><option>Casas y departamentos</option><option>Electrónicos</option><option>Otros</option></select></label>
-      <label>Operación<select value={draft.operation} onChange={e => change('operation', e.target.value)}><option>Venta</option>{isHome && <><option>Alquiler</option><option>Anticrético</option></>}</select></label>
+      <label>Categoría<select value={draft.category} onChange={e => change('category', e.target.value)}><option>Motos</option><option>Vehículos</option><option>Lotes</option><option>Terrenos y parcelas</option><option>Casas y departamentos</option><option>Maquinaria agrícola</option><option>Electrónicos</option><option>Otros</option></select></label>
+      <label>Operación<select value={draft.operation} onChange={e => change('operation', e.target.value)}><option>Venta</option>{canRent && <option>Alquiler</option>}{isHome && <option>Anticrético</option>}</select></label>
       <div className="wide price-fields">
         <label>{priceLabel}<input type="number" min="1" max="999999999" step="0.01" required value={draft.price} onChange={e => change('price', e.target.value)} placeholder="0" /></label>
         <label>Moneda<select value={draft.currency} onChange={e => change('currency', e.target.value)}><option value="BOB">Bolivianos (Bs)</option><option value="USD">Dólares (US$)</option></select></label>

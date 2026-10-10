@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Icon from '@/components/icon';
 import CategoryIcon from '@/components/category-icon';
+import ViewCounter from '@/components/view-counter';
 import { money, normalize, type Currency, type Listing } from '@/lib/listings';
 
 const categories = [
@@ -13,12 +14,14 @@ const categories = [
   { name: 'Motos', icon: 'bike' },
   { name: 'Vehículos', icon: 'car' },
   { name: 'Lotes', icon: 'land' },
+  { name: 'Terrenos y parcelas', label: 'Terrenos', icon: 'field' },
   { name: 'Casas y departamentos', label: 'Casas y deptos.', icon: 'home' },
+  { name: 'Maquinaria agrícola', label: 'Maquinaria', icon: 'tractor' },
   { name: 'Electrónicos', icon: 'electronics' },
   { name: 'Otros', icon: 'other' },
 ] as const;
 
-export default function Marketplace({ listings }: { listings: Listing[] }) {
+export default function Marketplace({ listings, siteViews }: { listings: Listing[]; siteViews: number }) {
   const params = useSearchParams();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('Todo');
@@ -68,10 +71,10 @@ export default function Marketplace({ listings }: { listings: Listing[] }) {
     </section>
 
     <section id="resultados" className="results">
-      <div className="results-header"><h1 className="catalog-title">{onlyFavorites ? 'Tus anuncios guardados' : 'Todos los anuncios disponibles'}</h1><label className="sort">Ordenar por<select value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Más recientes</option><option value="low" disabled={currency === 'Todas'}>Menor precio</option><option value="high" disabled={currency === 'Todas'}>Mayor precio</option></select></label></div>
+      <div className="results-header"><div className="results-title"><h1 className="catalog-title">{onlyFavorites ? 'Tus anuncios guardados' : 'Todos los anuncios disponibles'}</h1><ViewCounter kind="site" initialCount={siteViews} className="site-views" /></div><label className="sort">Ordenar por<select value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Más recientes</option><option value="low" disabled={currency === 'Todas'}>Menor precio</option><option value="high" disabled={currency === 'Todas'}>Mayor precio</option></select></label></div>
       <div className="filters"><span className="filter-label"><Icon name="sliders" /> Filtrar</span><label className="filter-operation">Operación<select value={operation} onChange={e => setOperation(e.target.value)}><option>Todas</option><option>Venta</option><option>Alquiler</option><option>Anticrético</option></select></label><label className="filter-currency">Moneda<select value={currency} onChange={e => { const next = e.target.value as Currency | 'Todas'; setCurrency(next); setMax(''); if (next === 'Todas') setSort('recent'); }}><option value="Todas">Todas</option><option value="BOB">Bolivianos (Bs)</option><option value="USD">Dólares (US$)</option></select></label><label className="filter-max">Precio máximo{currency === 'BOB' ? ' (Bs)' : currency === 'USD' ? ' (US$)' : ''}<input type="number" min="0" value={max} onChange={e => setMax(e.target.value)} placeholder={currency === 'Todas' ? 'Elige moneda' : 'Sin límite'} disabled={currency === 'Todas'} /></label><button className="text-button" onClick={reset}>Limpiar filtros</button>{onlyFavorites && <Link href="/" className="text-button favorites-all">Ver todos</Link>}<span className="count" role="status">{filtered.length} {filtered.length === 1 ? 'anuncio' : 'anuncios'}</span></div>
       {storageMessage && <p role="status">{storageMessage}</p>}
-      <div className="grid">{filtered.map(x => <article className="card" key={x.id}><div className="card-image"><Link href={'/anuncios/' + x.id} className="photo-placeholder">{x.image ? <Image src={x.image} alt={'Foto de ' + x.title} fill unoptimized sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 33vw" /> : 'Fotografías próximamente'}</Link><span className={'badge ' + (x.operation === 'Alquiler' ? 'rental' : '')}>{x.operation}</span><button className={'heart ' + (favorites.includes(x.id) ? 'saved' : '')} aria-label={(favorites.includes(x.id) ? 'Quitar de guardados: ' : 'Guardar: ') + x.title} aria-pressed={favorites.includes(x.id)} onClick={() => toggle(x.id)}><Icon name="heart" fill={favorites.includes(x.id) ? 'currentColor' : 'none'} /></button></div><div className="card-body"><p className="card-category">{x.category}</p><Link className="card-title" href={'/anuncios/' + x.id}>{x.title}</Link><p className="price">{money(x.price,x.currency)}{x.operation === 'Alquiler' && <small> / mes</small>}</p>{x.facts.length > 0 && <p className="facts">{x.facts.join(' · ')}</p>}<div className="card-bottom"><span><Icon name="pin" /> {x.zone}</span><span>San Julián</span></div></div></article>)}</div>
+      <div className="grid">{filtered.map(x => <article className="card" key={x.id}><div className="card-image"><Link href={'/anuncios/' + x.id} className="photo-placeholder">{x.image ? <Image src={x.image} alt={'Foto de ' + x.title} fill unoptimized sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 33vw" /> : 'Fotografías próximamente'}</Link><span className={'badge ' + (x.operation === 'Alquiler' ? 'rental' : '')}>{x.operation}</span><button className={'heart ' + (favorites.includes(x.id) ? 'saved' : '')} aria-label={(favorites.includes(x.id) ? 'Quitar de guardados: ' : 'Guardar: ') + x.title} aria-pressed={favorites.includes(x.id)} onClick={() => toggle(x.id)}><Icon name="heart" fill={favorites.includes(x.id) ? 'currentColor' : 'none'} /></button></div><div className="card-body"><p className="card-category">{x.category}</p><Link className="card-title" href={'/anuncios/' + x.id}>{x.title}</Link><p className="price">{money(x.price,x.currency)}{x.operation === 'Alquiler' && <small> / mes</small>}</p>{x.facts.length > 0 && <p className="facts">{x.facts.join(' · ')}</p>}<div className="card-bottom"><span><Icon name="pin" /> {x.zone}</span><span className="card-views" title="Visualizaciones del anuncio"><Icon name="eye" /> {new Intl.NumberFormat('es-BO').format(x.views)}</span></div></div></article>)}</div>
       {!filtered.length && <div className="empty"><span className="empty-icon"><Icon name="search" /></span><h3>{onlyFavorites ? 'No hay guardados con estos filtros' : 'Todavía no hay anuncios con estos filtros'}</h3><p>Prueba otra búsqueda o cambia los filtros. También puedes ser de los primeros en publicar.</p><div className="empty-actions"><button className="button" onClick={reset}>Limpiar filtros</button><Link className="button empty-publish" href="/publicar">Publicar anuncio <Icon name="arrow" /></Link></div></div>}
     </section>
 

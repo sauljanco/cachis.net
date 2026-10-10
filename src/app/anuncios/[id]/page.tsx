@@ -7,6 +7,7 @@ import { currentUser } from '@/lib/auth/server';
 import ReportForm from '@/components/report-form';
 import ListingGallery from '@/components/listing-gallery';
 import ListingMap from '@/components/listing-map';
+import ViewCounter from '@/components/view-counter';
 
 export const dynamic = 'force-dynamic';
 type Props = {params:Promise<{id:string}>};
@@ -47,11 +48,11 @@ export default async function Detail({params}:Props) {
           <h1>{listing.title}</h1>
           <p className="price">{money(listing.price,listing.currency)}{listing.operation==='Alquiler'&&<small> / mes</small>}</p>
           {listing.operation==='Anticrético'&&<p>Monto del anticrético, no mensualidad.</p>}
-          <p className="detail-zone">◎ {listing.zone}, San Julián, Santa Cruz</p>
+          <p className="detail-zone">◎ {listing.zone}, San Julián, Santa Cruz</p><ViewCounter kind="listing" id={listing.id} initialCount={listing.views} className="detail-views" />
         </div>
         <div className="detail-contact">
           <div className="notice"><strong>Publicado por {listing.contactName}</strong></div>
-          {(listing.category==='Lotes'||listing.category==='Casas y departamentos')&&<ListingMap latitude={listing.latitude} longitude={listing.longitude} title={listing.title}/>}
+          {(['Lotes','Terrenos y parcelas','Casas y departamentos'].includes(listing.category))&&<ListingMap latitude={listing.latitude} longitude={listing.longitude} title={listing.title}/>}
           <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="button full detail-whatsapp">Consultar por WhatsApp ↗</a>
         </div>
       </aside>
