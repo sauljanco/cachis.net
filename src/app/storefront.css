@@ -633,3 +633,35 @@
 @media (max-width: 760px) {
   .marketplace .category-heading span:last-child { display: inline; }
 }
+
+/* Catalog pages keep the same compact rhythm as the first page. */
+.catalog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 26px 0 44px;
+  color: #587067;
+  font-size: 13px;
+  font-weight: 700;
+}
+.catalog-pagination a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 112px;
+  padding: 8px 14px;
+  border: 1px solid #cddbd0;
+  border-radius: 10px;
+  color: #124d3e;
+  background: #fff;
+}
+.catalog-pagination a:hover { border-color: #79ac83; background: #f0f6ec; }
+.results[aria-busy="true"] .grid { opacity: .65; }
+@media (max-width: 650px) {
+  .catalog-pagination { gap: 5px; font-size: 11px; }
+  .catalog-pagination a { min-width: 88px; padding: 8px 6px; }
+}
+
+.catalog-pending { padding: 18px 0; color: #587067; font-size: 14px; }
