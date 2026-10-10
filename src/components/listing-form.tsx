@@ -155,6 +155,7 @@ export default function ListingForm({ id, initialDraft, initialPhotoCount = 0, d
     <section className="listing-form-section" aria-labelledby="listing-section-photos">
       <div className="listing-section-heading"><span>02</span><div><h2 id="listing-section-photos">Muestra tu producto</h2><p>Las fotos ayudan a que las personas conozcan tu oferta.</p></div></div>
       {photoSelector}
+      {status.startsWith('Añade al menos una fotografía') && <p className="listing-photo-error" role="alert">{status}</p>}
       {hasPropertyMap && <PropertyMapPicker latitude={draft.latitude} longitude={draft.longitude} onChange={(latitude, longitude) => { setDraft(current => ({ ...current, latitude, longitude })); setStatus(''); }} />}
     </section>
     <section className="listing-form-section" aria-labelledby="listing-section-contact">

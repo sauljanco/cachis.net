@@ -399,3 +399,5 @@ footer{max-width:1232px;margin:auto;padding:30px 0 34px;border-color:#e0e9df}foo
 .photo-retry-form .listing-photo-input:focus-within{outline:3px solid #b38b22;outline-offset:2px}
 
 @media(max-width:650px){.header{padding-top:calc(8px + env(safe-area-inset-top, 0px))}}
+
+.listing-photo-error{margin:7px 0 0;color:#a3342a;font-size:12px;font-weight:750}
